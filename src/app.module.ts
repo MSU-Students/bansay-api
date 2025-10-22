@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 import { StudentService } from './student/student.service';
 import { OfficerController } from './officer/officer.controller';
 import { OfficerService } from './officer/officer.service';
+import { LiabilityModule } from './liability/liability.module';
 
 @Module({
-  imports: [],
+  imports: [LiabilityModule],
   controllers: [AppController, StudentController, OfficerController],
   providers: [AppService, StudentService, OfficerService],
 })
