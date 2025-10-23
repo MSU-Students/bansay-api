@@ -11,26 +11,26 @@ export class StudentController {
     constructor(private service: StudentService) {}
     @Post()
     create(@Body() student: StudentRegistrationDto) {
-        this.service.create(student);
+        return this.service.create(student);
     }
     
     @Get()
     @ApiResponse({
         type: [StudentDto]
     })
-    findAll():StudentDto[] {
+    findAll() {
         return this.service.findAll();
     }
 
 
     @Patch(':id')
     patchStudent(@Param('id') id: string, @Body() patchDto: StudentPatchDto ) {
-        this.service.patch(id, patchDto.field, patchDto.value);
+        return this.service.patch(id, patchDto.field, patchDto.value);
     }
 
     @Delete(':id')
     deleteStudent(@Param('id') id: string) {
-        this.service.delete(id);
+        return this.service.delete(id);
     }
 
 
