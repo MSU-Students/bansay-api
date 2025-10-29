@@ -1,9 +1,14 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRegisterDto } from 'src/auth/dto/user-register.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserStatus } from 'src/user/interfaces/user-status.enum';
 
 @Injectable()
 export class AuthService {
@@ -13,19 +18,35 @@ export class AuthService {
   ) {}
 
   async register(userInput: UserRegisterDto): Promise<any> {
-    const existingUser = await this.userRepository.findBy({
+    const existingUser = await this.userRepository.findOneBy({
       username: userInput.username,
     });
 
     if (existingUser) throw new ConflictException('User ID already exists..');
 
-    const hashedPassword = await bcrypt.hash(userInput.password, 10);
-    const newUser = this.userRepository.create({
-      ...userInput,
-      password: hashedPassword,
-    });
+    try {
+      const hashedPassword = await bcrypt.hash(userInput.password, 10);
+      const newUser = this.userRepository.create({
+        ...userInput,
+        password: hashedPassword,
+        status: UserStatus.PENDING,
+      });
 
-    await this.userRepository.save(newUser);
-    return { message: 'User registered successfully' };
+      const savedUser = await this.userRepository.save(newUser);
+      return {
+        message: 'User registered successfully',
+        user: {
+          id: savedUser.id,
+          firstName: savedUser.firstName,
+          lastName: savedUser.lastName,
+          username: savedUser.username,
+          email: savedUser.email,
+          role: savedUser.role,
+          status: savedUser.status,
+        },
+      };
+    } catch {
+      throw new InternalServerErrorException('Failed to create user');
+    }
   }
 }
