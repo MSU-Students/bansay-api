@@ -11,13 +11,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from './user/entities/student.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
-      load: [configuration]
+      load: [configuration],
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
@@ -27,15 +28,15 @@ import configuration from './config/configuration';
           port: configService.get('database.port') || 5432,
           username: configService.get('database.username') || 'user',
           password: configService.get('database.password') || 'password',
-          database: configService.get('database.dbName') ||'bansay_db',
-          entities: [Student],
+          database: configService.get('database.dbName') || 'bansay_db',
+          entities: [Student, User],
           synchronize: true,
-        }
+        };
       },
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
-    LiabilityModule, 
-    UserModule
+    LiabilityModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
