@@ -45,14 +45,7 @@ jobs:
           git clone "$REPO_URL" "$REPO_DIR"
           cd "$REPO_DIR"
         fi
-        ls
         
-        cd "$REPO_DIR/bansay-api"
         npm install
-
-        cd "$REPO_DIR/bansay-api"
-        git pull origin master
-        npm install
-
         echo "Starting/restarting application..."
         npm start
