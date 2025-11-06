@@ -21,7 +21,7 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: |
         echo "$PRIVATE_KEY" > github-ec2.pem && chmod 600 github-ec2.pem
-        echo "DATABASE_HOST=${DATABASE_HOST}" > ~/.ssh/environment # replaces existing content
+        echo "DATABASE_HOST=${DATABASE_HOST}" >> ~/.ssh/environment # replaces existing content
         echo "DATABASE_NAME=${DATABASE_NAME}" >> ~/.ssh/environment # appends to the file
         echo "DB_USER=${DB_USER}" >> ~/.ssh/environment # appends to the file
         echo "DB_PASSWORD=${DB_PASSWORD}" >> ~/.ssh/environment # appends to the file
