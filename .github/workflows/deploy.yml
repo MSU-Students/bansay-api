@@ -21,38 +21,3 @@ jobs:
         echo "Current directory: $(pwd)"
         echo "Listing home directory:"
         ls -la ~
-
-        echo "Installing Node.js..."
-        if ! command -v nvm &> /dev/null; then
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-        fi
-        nvm install node
-
-        echo "Installing PM2..."
-        if ! command -v pm2 &> /dev/null; then
-        npm install -g pm2
-        fi
-
-        REPO_URL="https://github.com/MSU-Students/bansay-api.git"
-        BRANCH="master"
-        REPO_DIR="$HOME/github-aws-ec2"
-
-        if [ -d "$REPO_DIR/.git" ]; then
-          cd "$REPO_DIR"
-          git pull origin "$BRANCH"
-        else
-          git clone "$REPO_URL" "$REPO_DIR"
-          cd "$REPO_DIR"
-        fi
-
-        cd "$REPO_DIR/simple-web-server"
-        npm install
-
-        cd ~/github-aws-ec2/simple-web-server
-        git pull origin main
-        npm install
-
-        echo "Starting/restarting application..."
-        npm start
