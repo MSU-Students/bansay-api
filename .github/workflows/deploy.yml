@@ -49,7 +49,7 @@ jobs:
         cd "$REPO_DIR/simple-web-server"
         npm install
 
-        cd ~/github-aws-ec2/simple-web-server
+        cd ~/github-aws-ec2/bansay-api
         git pull origin main
         npm install
 
