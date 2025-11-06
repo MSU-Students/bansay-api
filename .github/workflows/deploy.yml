@@ -21,7 +21,6 @@ jobs:
         SCRIPT_BEFORE: |
             whoami
             ls -al
-            mkdir -p ${{ secrets.REMOTE_TARGET }}
         SCRIPT_AFTER: |  
           DATABASE_NAME=${{ secrets.DATABASE_NAME }}
           DATABASE_HOST=${{ secrets.DATABASE_HOST }}
