@@ -45,13 +45,13 @@ jobs:
           git clone "$REPO_URL" "$REPO_DIR"
           cd "$REPO_DIR"
         fi
-        cd "$REPO_DIR"
-        ls -la ~
+        ls
+        
         cd "$REPO_DIR/bansay-api"
         npm install
 
-        cd ~/github-aws-ec2/bansay-api
-        git pull origin main
+        cd "$REPO_DIR/bansay-api"
+        git pull origin master
         npm install
 
         echo "Starting/restarting application..."
