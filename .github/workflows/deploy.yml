@@ -15,8 +15,17 @@ jobs:
         PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
         HOST: ${{ secrets.EC2_HOST }}
         USER: ${{ secrets.EC2_USER }}
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: |
         echo "$PRIVATE_KEY" > github-ec2.pem && chmod 600 github-ec2.pem
+        echo "DATABASE_HOST=${DATABASE_HOST}" > ~/.ssh/environment # replaces existing content
+        echo "DATABASE_NAME=${DATABASE_NAME}" >> ~/.ssh/environment # appends to the file
+        echo "DB_USER=${DB_USER}" >> ~/.ssh/environment # appends to the file
+        echo "DB_PASSWORD=${DB_PASSWORD}" >> ~/.ssh/environment # appends to the file
+        
         ssh -o StrictHostKeyChecking=no -i github-ec2.pem ${USER}@${HOST} '
         echo "Current directory: $(pwd)"
         echo "Listing home directory:"
