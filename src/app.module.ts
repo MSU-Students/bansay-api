@@ -12,7 +12,7 @@ import { Student } from './user/entities/student.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { User } from './user/entities/user.entity';
-
+import { Officer } from './user/entities/officer.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,7 +29,7 @@ import { User } from './user/entities/user.entity';
           username: configService.get('database.username') || 'user',
           password: configService.get('database.password') || 'password',
           database: configService.get('database.dbName') || 'bansay_db',
-          entities: [Student, User],
+          entities: [Student, User, Officer],
           synchronize: true,
         };
       },
