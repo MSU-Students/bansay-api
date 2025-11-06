@@ -49,6 +49,5 @@ jobs:
         npm install
         npm run build
         echo "Starting/restarting application..."
-        cd dist
-        pm2 restart main.js || pm2 start main.js
+        pm2 restart dist/main.js || pm2 start dist/main.js
         '
