@@ -25,7 +25,7 @@ export class AuthController {
     const payload: JwtPayload = {
       userId: '1',
       email: 'test@example.com',
-      roles: [UserRole.ADMIN],
+      role: UserRole.ADMIN,
     };
 
     const token = this.jwtService.sign(payload);
