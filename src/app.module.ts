@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { StudentController } from './user/controllers/student.controller';
 import { AppService } from './app.service';
-import { StudentService } from './user/services/student.service';
-import { OfficerController } from './user/controllers/officer.controller';
-import { OfficerService } from './user/services/officer.service';
 import { LiabilityModule } from './liability/liability.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,6 +8,9 @@ import { Student } from './user/entities/student.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { User } from './user/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guards/auth.guard';
 
 @Module({
   imports: [
@@ -45,8 +44,15 @@ import { User } from './user/entities/user.entity';
     }),
     LiabilityModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
