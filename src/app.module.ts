@@ -31,6 +31,14 @@ import { User } from './user/entities/user.entity';
           database: configService.get('database.dbName') || 'bansay_db',
           entities: [Student, User],
           synchronize: true,
+          dialectOptions: {
+            ssl: {
+              // Use this option to bypass certificate verification, 
+              // which is usually fine for development/testing but LESS SECURE.
+              // ⚠️ For production, you should use a CA bundle (see Note below).
+              rejectUnauthorized: false, 
+            },
+          },
         };
       },
       inject: [ConfigService],
