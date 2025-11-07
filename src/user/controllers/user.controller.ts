@@ -21,10 +21,7 @@ export class UserController {
   // Update user - ADMIN only
   @Roles(UserRole.ADMIN)
   @Patch(':id')
-  updateUserStatus(
-    @Param('id') id: string,
-    @Body() userPatchDto: UserPatchDto,
-  ) {
+  patchUser(@Param('id') id: string, @Body() userPatchDto: UserPatchDto) {
     return this.userService.patch(id, userPatchDto);
   }
 }
