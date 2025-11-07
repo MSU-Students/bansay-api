@@ -20,6 +20,7 @@ async function bootstrap() {
     .setDescription('The Basay API, liability management system')
     .setVersion('1.0')
     .addTag('liability')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
