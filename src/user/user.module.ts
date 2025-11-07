@@ -8,10 +8,18 @@ import { Student } from './entities/student.entity';
 import { UserService } from './services/user.service';
 import { UserController } from './controllers/user.controller';
 import { User } from './entities/user.entity';
+import { AdminService } from './services/admin.service';
+import { AdminController } from './controllers/admin.controller';
+import { Officer } from './entities/officer.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Student, User])],
-  controllers: [StudentController, OfficerController, UserController],
-  providers: [StudentService, OfficerService, UserService],
+  imports: [TypeOrmModule.forFeature([Student, User, Officer])],
+  controllers: [
+    StudentController,
+    OfficerController,
+    UserController,
+    AdminController,
+  ],
+  providers: [StudentService, OfficerService, UserService, AdminService],
 })
 export class UserModule {}
