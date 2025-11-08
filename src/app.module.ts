@@ -22,6 +22,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
+        const isLocal = configService.get<string>('environment') === 'development';
         return {
           type: 'postgres',
           host: configService.get('database.host') || 'localhost',
@@ -31,7 +32,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
           database: configService.get('database.dbName') || 'bansay_db',
           entities: [Student, User, Officer],
           synchronize: true,
-          extra: {
+          extra: isLocal ? undefined: {
             ssl: {
               rejectUnauthorized: false, 
             },
