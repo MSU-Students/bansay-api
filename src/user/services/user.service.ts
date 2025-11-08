@@ -1,8 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetUsersQueryDto } from '../dto/user-query.dto';
+import { UserPatchDto } from '../dto/patch-user.dto';
 
 @Injectable()
 export class UserService {
@@ -40,5 +45,27 @@ export class UserService {
     } catch {
       throw new BadRequestException('Invalid filter parameters');
     }
+  }
+
+  async patch(userId: string, userPatchDto: UserPatchDto) {
+    const result = await this.userRepository.update(
+      Number(userId),
+      userPatchDto,
+    );
+
+    if (result.affected === 0) throw new NotFoundException('User not found.');
+
+    return this.userRepository.findOne({
+      where: { id: Number(userId) },
+      select: [
+        'id',
+        'username',
+        'firstName',
+        'lastName',
+        'email',
+        'role',
+        'status',
+      ],
+    });
   }
 }
