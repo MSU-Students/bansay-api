@@ -9,12 +9,17 @@ import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserStatus } from 'src/user/interfaces/user-status.enum';
+import { UserService } from 'src/user/services/user.service';
 
+type AuthInput = { username: string; password: string };
+type SignInData = { id: number; username: string };
+ 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private userService: UserService, // inject UserService
   ) {}
 
   async register(userInput: UserRegisterDto): Promise<any> {
@@ -49,4 +54,17 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to create user');
     }
   }
+
+  async validateUser(input: AuthInput) {
+    const user = await this.userService.findUserByName(input.username)
+
+    if (user && user.password === input.password) {
+      return {
+        id: user.id,
+        username: user.username,
+      };
+    }
+
+    return null;
+  } 
 }

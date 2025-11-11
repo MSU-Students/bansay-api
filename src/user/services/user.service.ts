@@ -25,18 +25,7 @@ const mockUsers: Partial<User>[] = [
 ];
 
 @Injectable()
-export class UserService {
-  async findUserByName(username: string): Promise<Partial<User> | undefined> {
-    return mockUsers.find((user) => user.username === username);
-  }
-
-  // How to move from mock to real DB lookup (when ready)
-  // Replace the mock function body with a repository call:
-  // inside UserService
-  // async findUserByName(username: string): Promise<User | null> {
-  //   return await this.userRepository.findOne({ where: { username } });
-  // }
-  
+export class UserService {  
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
@@ -94,4 +83,15 @@ export class UserService {
       ],
     });
   }
+
+  async findUserByName(username: string): Promise<Partial<User> | undefined> {
+    return mockUsers.find((user) => user.username === username);
+  }
+
+  // How to move from mock to real DB lookup (when ready)
+  // Replace the mock function body with a repository call:
+  // inside UserService
+  // async findUserByName(username: string): Promise<User | null> {
+  //   return await this.userRepository.findOne({ where: { username } });
+  // }
 }
