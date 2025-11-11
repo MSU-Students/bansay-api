@@ -84,17 +84,6 @@ export class UserService {
     });
   }
 
-  async findUserByName(username: string): Promise<Partial<User> | undefined> {
-    return mockUsers.find((user) => user.username === username);
-  }
-
-  // How to move from mock to real DB lookup (when ready)
-  // Replace the mock function body with a repository call:
-  // inside UserService
-  // async findUserByName(username: string): Promise<User | null> {
-  //   return await this.userRepository.findOne({ where: { username } });
-  // }
-
   // If includePassword is true, select the password column (it is select: false on the entity).
   async findUserByName(
     username: string,
