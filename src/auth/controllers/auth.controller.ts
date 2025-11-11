@@ -42,6 +42,7 @@ export class AuthController {
 
   // start of user story 3.1 (backend)
   // post login endpoint (no validation yet)
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login() {
