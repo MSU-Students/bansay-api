@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, NotImplementedException } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { UserRegisterDto } from '../dto/user-register.dto';
 import { JwtPayload } from '../types/jwt-payload.interface';
@@ -35,5 +35,16 @@ export class AuthController {
       token_type: 'Bearer',
       expires_in: '1h',
     };
+  }
+
+  // register above
+  // login below
+
+  // start of user story 3.1 (backend)
+  // post login endpoint (no validation yet)
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
+  login() {
+    throw new NotImplementedException('This method is not implemented')
   }
 }
