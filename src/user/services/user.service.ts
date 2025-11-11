@@ -26,8 +26,8 @@ const mockUsers: Partial<User>[] = [
 
 @Injectable()
 export class UserService {
-  async findUserByName(username: string): Promise<User | undefined> {
-    return users.find((user) => user.username === username);
+  async findUserByName(username: string): Promise<Partial<User> | undefined> {
+    return mockUsers.find((user) => user.username === username);
   }
 
   constructor(
