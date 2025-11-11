@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRegisterDto } from 'src/auth/dto/user-register.dto';
@@ -13,6 +14,7 @@ import { UserService } from 'src/user/services/user.service';
 
 type AuthInput = { username: string; password: string };
 type SignInData = { id: number; username: string };
+type AuthResult = { accessToken: string; id: number; username: string};
  
 @Injectable()
 export class AuthService {
@@ -55,16 +57,29 @@ export class AuthService {
     }
   }
 
-  async validateUser(input: AuthInput) {
-    const user = await this.userService.findUserByName(input.username)
+  async authenticate(input: AuthInput): Promise<AuthResult> {
+    const user = await this.validateUser(input);
 
-    if (user && user.password === input.password) {
-      return {
-        id: user.id,
-        username: user.username,
-      };
+    if (!user) {
+      throw new UnauthorizedException();
     }
 
-    return null;
+    return {
+      accessToken: 'fake-access',
+      id: user.id,
+      username: user.username,
+    }
+  }
+
+  async validateUser(input: AuthInput) {
+    // request the password field from UserService so we can validate credentials
+    const user = await this.userService.findUserByName(input.username, true);
+
+    if (!user || !user.password) return null;
+
+    // For now you compare plain text (mock). Later use bcrypt.compare for hashed passwords.
+    if (user.password !== input.password) return null;
+
+    return { id: user.id, username: user.username };
   } 
 }
