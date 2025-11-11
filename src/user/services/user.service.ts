@@ -50,7 +50,7 @@ export class UserService {
           'role',
           'status',
           'createdAt',
-        ],
+        ] as (keyof User)[], // <- cast added
       });
 
       return {
@@ -80,17 +80,17 @@ export class UserService {
         'email',
         'role',
         'status',
-      ],
+      ] as (keyof User)[], // <- cast added
     });
   }
 
   // If includePassword is true, select the password column (it is select: false on the entity).
   async findUserByName(
     username: string,
-    includePassword = false,
+    includePassword = false, 
   ): Promise<User | null> {
     const select = includePassword
-      ? [
+      ? ([
           'id',
           'username',
           'password',
@@ -99,8 +99,8 @@ export class UserService {
           'email',
           'role',
           'status',
-        ]
-      : [
+        ] as (keyof User)[])
+      : ([
           'id',
           'username',
           'firstName',
@@ -108,7 +108,7 @@ export class UserService {
           'email',
           'role',
           'status',
-        ];
+        ] as (keyof User)[]);
 
     return await this.userRepository.findOne({
       where: { username },
