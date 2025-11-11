@@ -35,7 +35,7 @@ export class Liability {
     type: 'enum',
     enum: LiabilityType,
     enumName: 'liability_type_enum',
-    default: LiabilityType.TUITION,
+    default: LiabilityType.FINE,
   })
   type: LiabilityType;
 
