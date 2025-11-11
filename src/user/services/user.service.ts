@@ -9,19 +9,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GetUsersQueryDto } from '../dto/user-query.dto';
 import { UserPatchDto } from '../dto/patch-user.dto';
 
-// mock data
-const users: User[] = [
-    {
-        userId: 1,
-        username: 'Alice',
-        password: 'topsecret'
-    },
-    {
-        userId: 2,
-        username: 'Bob',
-        password: '123abc',
-    },
-]
+// use the real User entity, from `user.entity.ts` for mock data.
+// use Partial<User> so we don't have to set every DB column.
+const mockUsers: Partial<User>[] = [
+  {
+    id: 1,
+    username: 'Alice',
+    password: 'topsecret',
+  },
+  {
+    id: 2,
+    username: 'Bob',
+    password: '123abc',
+  },
+];
 
 @Injectable()
 export class UserService {
