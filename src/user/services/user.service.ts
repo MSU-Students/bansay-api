@@ -15,6 +15,20 @@ export type User = {
   password: string;
 }
 
+// mock data
+const users: User[] = [
+    {
+        userId: 1,
+        username: 'Alice',
+        password: 'topsecret'
+    },
+    {
+        userId: 2,
+        username: 'Bob',
+        password: '123abc',
+    },
+]
+
 @Injectable()
 export class UserService {
   constructor(
