@@ -110,9 +110,27 @@ export class UserService {
           'status',
         ] as (keyof User)[]);
 
-    return await this.userRepository.findOne({
-      where: { username },
-      select,
-    });
+    // try DB lookup first
+    try {
+      const found = await this.userRepository.findOne({
+        where: { username },
+        select,
+      });
+      if (found) return found;
+    } catch {
+      // ignore DB errors for local/mock usage
+    }
+
+    // fallback to in-file mock users (tutorial/testing)
+    const mock = mockUsers.find((u) => u.username === username);
+    if (!mock) return null;
+
+    // if password wasn't requested, remove it to mimic DB behavior
+    if (!includePassword) {
+      const { password, ...rest } = mock as Partial<User>;
+      return rest as unknown as User;
+    }
+
+    return mock as unknown as User;
   }
 }
