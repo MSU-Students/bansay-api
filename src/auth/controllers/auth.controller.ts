@@ -5,11 +5,12 @@ import { JwtPayload } from '../types/jwt-payload.interface';
 import { UserRole } from 'src/user/interfaces/user-role.enum';
 import { JwtService } from '@nestjs/jwt';
 import { Public } from '../decorators/is-public.decorator';
+import { UserLoginDto } from '../dto/user-login.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
+    private authService: AuthService,
     private jwtService: JwtService,
   ) {}
 
@@ -45,7 +46,8 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login() {
-    throw new NotImplementedException('This method is not implemented')
+  async login(@Body() userLoginDto: UserLoginDto) {
+    // forward to AuthService to authenticate and return token/result
+    return this.authService.authenticate(userLoginDto);
   }
 }
