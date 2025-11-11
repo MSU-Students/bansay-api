@@ -9,12 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GetUsersQueryDto } from '../dto/user-query.dto';
 import { UserPatchDto } from '../dto/patch-user.dto';
 
-export type User = {
-  userId: number;
-  username: string;
-  password: string;
-}
-
 // mock data
 const users: User[] = [
     {
