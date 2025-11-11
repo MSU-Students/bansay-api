@@ -33,13 +33,13 @@ import { AuthGuard } from './auth/guards/auth.guard';
           database: configService.get('database.dbName') || 'bansay_db',
           entities: [Student, User, Officer],
           synchronize: true,
-          extra: isLocal
-            ? undefined
-            : {
-                ssl: {
-                  rejectUnauthorized: false,
-                },
-              },
+          // extra: isLocal
+          //   ? undefined
+          //   : {
+          //       ssl: {
+          //         rejectUnauthorized: false,
+          //       },
+          //     },
         };
       },
       inject: [ConfigService],
