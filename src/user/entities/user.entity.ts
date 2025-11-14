@@ -6,9 +6,11 @@ import {
   UpdateDateColumn,
   Index,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { UserRole } from '../interfaces/user-role.enum';
 import { UserStatus } from '../interfaces/user-status.enum';
+import { Liability } from 'src/liability/entities/liability.entity';
 
 @Entity('users')
 @Index(['username'], { unique: true })
@@ -48,6 +50,14 @@ export class User {
     default: UserStatus.PENDING,
   })
   status: UserStatus;
+
+  @OneToMany(() => Liability, (liability) => liability.student, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  studentLiabilities: Liability[];
+
+  @OneToMany(() => Liability, (liability) => liability.issuer)
+  issuedLiabilities: Liability[];
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LiabilityController } from './liability.controller';
-import { LiabilityService } from './liability.service';
+import { LiabilityController } from '../liability.controller';
+import { LiabilityService } from '../liability.service';
 
 describe('LiabilityController', () => {
   let controller: LiabilityController;
