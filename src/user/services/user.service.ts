@@ -9,23 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GetUsersQueryDto } from '../dto/user-query.dto';
 import { UserPatchDto } from '../dto/patch-user.dto';
 
-// use the real User entity, from `user.entity.ts` for mock data.
-// use Partial<User> so we don't have to set every DB column.
-const mockUsers: Partial<User>[] = [
-  {
-    id: 1,
-    username: 'Alice',
-    password: 'topsecret',
-  },
-  {
-    id: 2,
-    username: 'Bob',
-    password: '123abc',
-  },
-];
-
 @Injectable()
-export class UserService {  
+export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
@@ -50,7 +35,7 @@ export class UserService {
           'role',
           'status',
           'createdAt',
-        ] as (keyof User)[], // <- cast added
+        ],
       });
 
       return {
@@ -80,57 +65,7 @@ export class UserService {
         'email',
         'role',
         'status',
-      ] as (keyof User)[], // <- cast added
+      ],
     });
-  }
-
-  // If includePassword is true, select the password column (it is select: false on the entity).
-  async findUserByName(
-    username: string,
-    includePassword = false, 
-  ): Promise<User | null> {
-    const select = includePassword
-      ? ([
-          'id',
-          'username',
-          'password',
-          'firstName',
-          'lastName',
-          'email',
-          'role',
-          'status',
-        ] as (keyof User)[])
-      : ([
-          'id',
-          'username',
-          'firstName',
-          'lastName',
-          'email',
-          'role',
-          'status',
-        ] as (keyof User)[]);
-
-    // try DB lookup first
-    try {
-      const found = await this.userRepository.findOne({
-        where: { username },
-        select,
-      });
-      if (found) return found;
-    } catch {
-      // ignore DB errors for local/mock usage
-    }
-
-    // fallback to in-file mock users (tutorial/testing)
-    const mock = mockUsers.find((u) => u.username === username);
-    if (!mock) return null;
-
-    // if password wasn't requested, remove it to mimic DB behavior
-    if (!includePassword) {
-      const { password, ...rest } = mock as Partial<User>;
-      return rest as unknown as User;
-    }
-
-    return mock as unknown as User;
   }
 }

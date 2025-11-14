@@ -21,6 +21,5 @@ import { Officer } from './entities/officer.entity';
     AdminController,
   ],
   providers: [StudentService, OfficerService, UserService, AdminService],
-  exports: [UserService] // for authmodule, we need to use the user service in there
 })
 export class UserModule {}
