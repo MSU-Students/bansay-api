@@ -18,3 +18,11 @@ WHERE username = 'nazi';
 
 -- @block
 SELECT * FROM users WHERE username = 'nazi';
+
+-- @block
+SELECT * FROM liabilities;
+
+-- @block
+UPDATE liabilities
+SET status = 'Paid'
+WHERE id = 2;

@@ -73,4 +73,18 @@ export class LiabilityController {
       liability: updatedLiability,
     };
   }
+
+  @Patch(':id/cancel')
+  @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  async cancel(@Param('id') id: string): Promise<{
+    message: string;
+    liability: Liability;
+  }> {
+    const cancelledLiability = await this.liabilityService.cancelLiability(Number(id));
+
+    return {
+      message: 'Liability cancelled successfully',
+      liability: cancelledLiability,
+    };
+  }
 }

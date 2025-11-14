@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Liability } from '../entities/liability.entity';
@@ -9,6 +11,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
+import { LiabilityStatus } from '../types/liability-status.type';
 
 @Injectable()
 export class LiabilityService {
@@ -91,6 +94,21 @@ export class LiabilityService {
       return await this.liabilityRepository.save(liability);
     } catch (error) {
       throw new BadRequestException(`Failed to update liability: ${error}`);
+    }
+  }
+
+  async cancelLiability(id: number): Promise<Liability> {
+    const liability = await this.findLiabilityById(id);
+    if (liability.status === LiabilityStatus.PAID) {
+      throw new ConflictException('Cannot cancel a liability that is already paid.');
+    }
+
+    liability.status = LiabilityStatus.CANCELLED;
+
+    try {
+      return await this.liabilityRepository.save(liability);
+    } catch (error) {
+      throw new InternalServerErrorException(`Failed to cancel liability: ${error}`);
     }
   }
 }
