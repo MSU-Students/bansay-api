@@ -1,4 +1,4 @@
-import { IsEnum, IsNumberString, IsOptional } from "class-validator";
+import { IsEnum, IsNumberString, IsOptional, IsString } from "class-validator";
 import { LiabilityStatus } from "../types/liability-status.type";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -21,4 +21,23 @@ export class QueryLiabilityDto {
     @IsNumberString()
     @IsOptional()
     studentId?: string;
+
+    @ApiProperty({
+        required: false,
+        description: "Field to sort by (e.g., 'dueDate', 'amount', 'status')",
+        example: 'dueDate',
+    })
+    @IsString()
+    @IsOptional()
+    sortBy?: string;
+
+    @ApiProperty({
+        required: false,
+        description: "Sorty order ('ASC' or 'DESC')",
+        example: 'ASC',
+        enum: ['ASC', 'DESC'],
+    })
+    @IsEnum(['ASC', 'DESC'])
+    @IsOptional()
+    sortOrder?: 'ASC' | 'DESC';
 }
