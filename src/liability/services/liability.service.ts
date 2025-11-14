@@ -26,14 +26,14 @@ export class LiabilityService {
     createLiability: CreateLiabilityDto,
     issuerId: number,
   ): Promise<any> {
-    const { studentId, amount, type, dueDate } = createLiability;
+    const { studentUsername, amount, type, dueDate } = createLiability;
 
     const student = await this.userRepository.findOneBy({
-      username: String(studentId),
+      username: studentUsername,
     });
 
     if (!student)
-      throw new NotFoundException(`Student with ID ${studentId} not found`);
+      throw new NotFoundException(`Student with username ${studentUsername} not found`);
 
     const issuer = await this.userRepository.findOneBy({
       id: issuerId,
