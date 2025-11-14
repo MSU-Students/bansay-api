@@ -115,7 +115,7 @@ async softDeleteLiability(id: number): Promise<void> {
   async findAllLiabilities(
     queryDto: QueryLiabilityDto,
   ): Promise<Liability[]> {
-    const { status, studentId } = queryDto;
+    const { status, studentId, sortBy, sortOrder } = queryDto;
 
     const where: FindOptionsWhere<Liability> = {};
 
@@ -127,12 +127,20 @@ async softDeleteLiability(id: number): Promise<void> {
       where.student = { id: Number(studentId) };
     }
 
+    const order: FindManyOptions<Liability>['order'] = {};
+
+    const allowedSortFields = ['dueDate', 'amount', 'status', 'type'];
+
+    if (sortBy && allowedSortFields.includes(sortBy)) {
+      order[sortBy] = sortOrder === 'DESC' ? 'DESC' : 'ASC';
+    } else {
+      order.dueDate = 'ASC';
+    }
+
     const findOptions: FindManyOptions<Liability> = {
       where,
       relations: ['student', 'issuer'],
-      order: {
-        dueDate: 'ASC',
-      },
+      order,
     };
 
     return this.liabilityRepository.find(findOptions);
