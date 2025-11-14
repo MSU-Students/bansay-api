@@ -7,11 +7,12 @@ import {
 } from '@nestjs/common';
 import { Liability } from '../entities/liability.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { LiabilityStatus } from '../types/liability-status.type';
+import { QueryLiabilityDto } from '../dto/query-liability.dto';
 
 @Injectable()
 export class LiabilityService {
@@ -109,5 +110,31 @@ async softDeleteLiability(id: number): Promise<void> {
     } catch (error) {
       throw new InternalServerErrorException(`Failed to soft-delete liability: ${error}`);
     }
+  }
+
+  async findAllLiabilities(
+    queryDto: QueryLiabilityDto,
+  ): Promise<Liability[]> {
+    const { status, studentId } = queryDto;
+
+    const where: FindOptionsWhere<Liability> = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (studentId) {
+      where.student = { id: Number(studentId) };
+    }
+
+    const findOptions: FindManyOptions<Liability> = {
+      where,
+      relations: ['student', 'issuer'],
+      order: {
+        dueDate: 'ASC',
+      },
+    };
+
+    return this.liabilityRepository.find(findOptions);
   }
 }

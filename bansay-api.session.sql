@@ -26,3 +26,8 @@ SELECT * FROM liabilities;
 UPDATE liabilities
 SET status = 'Paid'
 WHERE id = 2;
+
+-- @block
+UPDATE liabilities
+SET status = 'Cancelled'
+WHERE id = 13;
