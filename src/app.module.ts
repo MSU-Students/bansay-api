@@ -34,13 +34,13 @@ import { Liability } from './liability/entities/liability.entity';
           database: configService.get('database.dbName') || 'bansay_db',
           entities: [Student, User, Officer, Liability],
           synchronize: true,
-          // extra: isLocal
-          //   ? undefined
-          //   : {
-          //       ssl: {
-          //         rejectUnauthorized: false,
-          //       },
-          //     },
+          extra: isLocal
+            ? undefined
+            : {
+                ssl: {
+                  rejectUnauthorized: false,
+                },
+              },
         };
       },
       inject: [ConfigService],
