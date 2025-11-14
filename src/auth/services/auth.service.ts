@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRegisterDto } from 'src/auth/dto/user-register.dto';
@@ -51,6 +52,37 @@ export class AuthService {
     } catch {
       throw new InternalServerErrorException('Failed to create user');
     }
+  }
+
+  // login METHOD
+  async login (userLoginDto: UserLoginDto) {
+    const user = await this.validateUser(userLoginDto);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials or account inactive');
+    }
+
+    // user is valid, now create JWT payload
+    const payload = {
+      userId: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    }
+
+    // sign the token
+    const accessToken = await this.jwtService.sign(payload);
+
+    return {
+      message: 'Login successful',
+      accessToken: accessToken,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    };
   }
 
   // validateUser METHOD
