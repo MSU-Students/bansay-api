@@ -12,6 +12,7 @@ import { Officer } from './user/entities/officer.entity';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/guards/auth.guard';
+import { Liability } from './liability/entities/liability.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
           username: configService.get('database.username') || 'user',
           password: configService.get('database.password') || 'password',
           database: configService.get('database.dbName') || 'bansay_db',
-          entities: [Student, User, Officer],
+          entities: [Student, User, Officer, Liability],
           synchronize: true,
           // extra: isLocal
           //   ? undefined
