@@ -7,6 +7,7 @@ import {
   Req,
   Param,
   Get,
+  Patch,
 } from '@nestjs/common';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { LiabilityService } from '../services/liability.service';
@@ -15,6 +16,7 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import type { RequestWithUser } from 'src/auth/types/request-with-user.interface';
 import { Liability } from '../entities/liability.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 
 @Controller('liability')
 @ApiBearerAuth()
@@ -52,6 +54,23 @@ export class LiabilityController {
     return {
       message: 'Liability retrieved successfully',
       liability,
+    };
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  async update(
+    @Param('id') id: string,
+    @Body() updateLiabilityDto: UpdateLiabilityDto,
+  ): Promise<{ message: string; liability: Liability }> {
+    const updatedLiability = await this.liabilityService.updateLiability(
+      Number(id),
+      updateLiabilityDto,
+    );
+
+    return {
+      message: 'Liability updated successfully',
+      liability: updatedLiability,
     };
   }
 }
