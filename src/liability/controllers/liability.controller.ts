@@ -41,13 +41,13 @@ export class LiabilityController {
     };
   }
 
-  @Get()
-  @Roles()
-  async findOne(@Param('id') id: number): Promise<{
+  @Get(':id')
+  @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  async findOne(@Param('id') id: string): Promise<{
     message: string;
     liability: Liability;
   }> {
-    const liability = await this.liabilityService.findLiabilityById(id);
+    const liability = await this.liabilityService.findLiabilityById(Number(id));
 
     return {
       message: 'Liability retrieved successfully',
