@@ -8,6 +8,7 @@ import {
   Param,
   Get,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { LiabilityService } from '../services/liability.service';
@@ -17,6 +18,7 @@ import type { RequestWithUser } from 'src/auth/types/request-with-user.interface
 import { Liability } from '../entities/liability.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
+import { QueryLiabilityDto } from '../dto/query-liability.dto';
 
 @Controller('liability')
 @ApiBearerAuth()
@@ -43,6 +45,20 @@ export class LiabilityController {
     };
   }
 
+  @Get()
+  @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  async findAll(@Query() queryDto: QueryLiabilityDto): Promise<{
+    message: string;
+    liabilities: Liability[];
+  }> {
+    const liabilities = await this.liabilityService.findAllLiabilities(queryDto);
+
+    return {
+      message: 'Liabilities retrieved successfully',
+      liabilities,
+    }
+  }
+  
   @Get(':id')
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
   async findOne(@Param('id') id: string): Promise<{
