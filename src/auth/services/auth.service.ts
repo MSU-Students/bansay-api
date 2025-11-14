@@ -9,12 +9,15 @@ import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserStatus } from 'src/user/interfaces/user-status.enum';
+import { UserLoginDto } from '../dto/user-login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
 
   async register(userInput: UserRegisterDto): Promise<any> {
@@ -48,5 +51,25 @@ export class AuthService {
     } catch {
       throw new InternalServerErrorException('Failed to create user');
     }
+  }
+
+  // validateUser METHOD
+  private async validateUser(userLoginDto: UserLoginDto): Promise<User | null> {
+    const { username, password } = userLoginDto;
+
+    const user = await this.userRepository.findOneBy({ username });
+
+    // check 1: user exists
+    // check 2: user status is active (not pending or disabled)
+    // check 3: password is correct
+    if (
+      user &&
+      user.status === UserStatus.ACTIVE &&
+      (await bcrypt.compare(password, user.password))
+    ) { // user exists, user is active, password is correct
+      return user;
+    }
+
+    return null;
   }
 }
