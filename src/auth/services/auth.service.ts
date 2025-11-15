@@ -55,11 +55,13 @@ export class AuthService {
   }
 
   // login METHOD
-  async login (userLoginDto: UserLoginDto) {
+  async login(userLoginDto: UserLoginDto) {
     const user = await this.validateUser(userLoginDto);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials or account inactive');
+      throw new UnauthorizedException(
+        'Invalid credentials or account inactive',
+      );
     }
 
     // user is valid, now create JWT payload
@@ -68,7 +70,7 @@ export class AuthService {
       username: user.username,
       email: user.email,
       role: user.role,
-    }
+    };
 
     // sign the token
     const accessToken = await this.jwtService.sign(payload);
@@ -92,17 +94,17 @@ export class AuthService {
     // const user = await this.userRepository.findOneBy({ username });
     // from user.entity.ts, the code:
     // @Column({ type: 'varchar', length: 128, select: false })
-    // "select: false" is a security feature, so using a normal database query like this one "findONeBy)", 
+    // "select: false" is a security feature, so using a normal database query like this one "findONeBy)",
     // TypeORM automatically hides the password so it's never accidentally sent to the frontend.
     // because of that, the `user` object this query returns has user.password set to undefined.
-    // documenting this because it took a long time for me to debug this 
+    // documenting this because it took a long time for me to debug this
     // as I encoutnered this 500 Internal Server Error on my Swagger when I was testing the login endpoint.
-    
+
     const user = await this.userRepository
-    .createQueryBuilder('user')
-    .where('user.username = :username', { username })
-    .addSelect('user.password')
-    .getOne();
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username })
+      .addSelect('user.password')
+      .getOne();
 
     // check 1: user exists
     // check 2: user status is active (not pending or disabled)
@@ -111,7 +113,8 @@ export class AuthService {
       user &&
       user.status === UserStatus.ACTIVE &&
       (await bcrypt.compare(password, user.password))
-    ) { // user exists, user is active, password is correct
+    ) {
+      // user exists, user is active, password is correct
       return user;
     }
 

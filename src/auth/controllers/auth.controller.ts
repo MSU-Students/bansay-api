@@ -9,9 +9,7 @@ import type { JwtPayload } from '../types/jwt-payload.interface';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('register')
