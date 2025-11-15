@@ -9,6 +9,7 @@ import {
   Get,
   Patch,
   Query,
+  Res,
 } from '@nestjs/common';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { LiabilityService } from '../services/liability.service';
@@ -21,6 +22,7 @@ import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import type { JwtPayload } from 'src/auth/types/jwt-payload.interface';
+import type { Response } from 'express';
 
 @Controller('liability')
 @ApiBearerAuth()
@@ -62,6 +64,23 @@ export class LiabilityController {
       message: 'Liabilities retrieved successfully',
       data,
     };
+  }
+
+  @Get('me/download/')
+  @Roles(UserRole.STUDENT)
+  async downloadStatement(
+    @GetUser() user: JwtPayload,
+    @Res() res: Response,
+  ) {
+    const csvString = await this.liabilityService.generateMyLiabilitiesCsv(user);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="BANSAY_statement.csv"',
+    );
+
+    res.send(csvString);
   }
 
   @Get()

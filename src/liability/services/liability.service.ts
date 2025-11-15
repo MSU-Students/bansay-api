@@ -171,4 +171,39 @@ export class LiabilityService {
       totalOutstandingBalance,
     };
   }
+
+async generateMyLiabilitiesCsv(user: JwtPayload): Promise<string> {
+    const { liabilities, totalOutstandingBalance } = await this.findMyLiabilities(user);
+
+    const headers = [
+      'ID',
+      'Type',
+      'Amount',
+      'Status',
+      'Due Date',
+      'Issued By (Officer)',
+    ];
+    let csvString = headers.join(',') + '\r\n';
+
+    for (const liability of liabilities) {
+      const issuerName = liability.issuer
+        ? `${liability.issuer.firstName} ${liability.issuer.lastName}`.trim()
+        : 'N/A';
+        
+      const row = [
+        liability.id,
+        liability.type,
+        liability.amount,
+        liability.status,
+        liability.dueDate,
+        `"${issuerName}"`,
+      ];
+      csvString += row.join(',') + '\r\n';
+    }
+
+    csvString += '\r\n';
+    csvString += `Total Outstanding Balance,${totalOutstandingBalance}\r\n`;
+
+    return csvString;
+  }
 }
