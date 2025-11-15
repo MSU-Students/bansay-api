@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
+import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 
 @Injectable()
 export class LiabilityService {
@@ -68,5 +69,28 @@ export class LiabilityService {
       throw new NotFoundException(`Liability with ID ${id} not found`);
 
     return liability;
+  }
+
+  async updateLiability(
+    id: number,
+    updateLiabilityDto: UpdateLiabilityDto,
+  ): Promise<Liability> {
+    const liability = await this.liabilityRepository.preload({
+      id: id,
+      ...updateLiabilityDto,
+      ...(updateLiabilityDto.dueDate && {
+        dueDate: new Date(updateLiabilityDto.dueDate),
+      }),
+    });
+
+    if (!liability) {
+      throw new NotFoundException(`Liability with ID ${id} not found`);
+    }
+
+    try {
+      return await this.liabilityRepository.save(liability);
+    } catch (error) {
+      throw new BadRequestException(`Failed to update liability: ${error}`);
+    }
   }
 }
