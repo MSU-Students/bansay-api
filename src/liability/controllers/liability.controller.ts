@@ -19,6 +19,8 @@ import { Liability } from '../entities/liability.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import type { JwtPayload } from 'src/auth/types/jwt-payload.interface';
 
 @Controller('liability')
 @ApiBearerAuth()
@@ -42,6 +44,23 @@ export class LiabilityController {
     return {
       message: 'Liability created successfully',
       liability,
+    };
+  }
+
+  @Get('me')
+  @Roles(UserRole.STUDENT)
+  async findMy(@GetUser() user: JwtPayload): Promise<{
+    message: string;
+    data: {
+      liabilities: Liability[];
+      totalOutstandingBalance: number;
+    };
+  }> {
+    const data = await this.liabilityService.findMyLiabilities(user);
+    
+    return {
+      message: 'Liabilities retrieved successfully',
+      data,
     };
   }
 

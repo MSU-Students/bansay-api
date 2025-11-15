@@ -14,7 +14,7 @@ SELECT * FROM users;
 -- @block
 UPDATE users
 SET status = 'Active'
-WHERE username = 'nazi';
+WHERE username = 'sawano';
 
 -- @block
 SELECT * FROM users WHERE username = 'nazi';
