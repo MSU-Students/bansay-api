@@ -1,4 +1,4 @@
-import { IsEnum, IsNumberString, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 import { LiabilityStatus } from "../types/liability-status.type";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -18,9 +18,9 @@ export class QueryLiabilityDto {
         description: 'Filter by the student ID',
         example: '1',
     })
-    @IsNumberString()
+    @IsString()
     @IsOptional()
-    studentId?: string;
+    studentUsername?: string;
 
     @ApiProperty({
         required: false,

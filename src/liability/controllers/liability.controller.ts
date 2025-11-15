@@ -16,18 +16,33 @@ import { UserRole } from 'src/user/interfaces/user-role.enum';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import type { RequestWithUser } from 'src/auth/types/request-with-user.interface';
 import { Liability } from '../entities/liability.entity';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
 
-@Controller('liability')
+@ApiTags('Liability')
 @ApiBearerAuth()
+@Controller('liability')
 export class LiabilityController {
   constructor(private readonly liabilityService: LiabilityService) {}
 
   @Post()
   @Roles(UserRole.OFFICER)
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new liability (Officer Only)' })
+  @ApiResponse({
+    status: 201,
+    description: 'Liability created successfully',
+    type: Liability,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden. Not an Officer.' })
+  @ApiResponse({ status: 404, description: 'Student not found' })
   async create(
     @Body() createLiabilityDto: CreateLiabilityDto,
     @Req() req: RequestWithUser,
@@ -47,20 +62,31 @@ export class LiabilityController {
 
   @Get()
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
-  async findAll(@Query() queryDto: QueryLiabilityDto): Promise<{
-    message: string;
-    liabilities: Liability[];
-  }> {
-    const liabilities = await this.liabilityService.findAllLiabilities(queryDto);
+  @ApiOperation({ summary: 'Find all liabilities (Officer/Admin Only)' })
+  @ApiQuery({ type: QueryLiabilityDto })
+  @ApiResponse({
+    status: 200,
+    description: 'A list of liabilities.',
+    type: [Liability],
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
+  async findAll(
+    @Query() queryDto: QueryLiabilityDto,
+  ): Promise<Liability[]> {
 
-    return {
-      message: 'Liabilities retrieved successfully',
-      liabilities,
-    }
+    return this.liabilityService.findAllLiabilities(queryDto);
   }
-  
+
   @Get(':id')
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Find one liability by ID (Officer/Admin Only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Liability retrieved successfully',
+    type: Liability,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
+  @ApiResponse({ status: 404, description: 'Liability not found' })
   async findOne(@Param('id') id: string): Promise<{
     message: string;
     liability: Liability;
@@ -75,6 +101,14 @@ export class LiabilityController {
 
   @Patch(':id')
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update a liability (Officer/Admin Only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Liability updated successfully',
+    type: Liability,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
+  @ApiResponse({ status: 404, description: 'Liability not found' })
   async update(
     @Param('id') id: string,
     @Body() updateLiabilityDto: UpdateLiabilityDto,
