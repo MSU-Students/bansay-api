@@ -7,6 +7,14 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Enable CORS - ADD THIS BEFORE useGlobalPipes
+  app.enableCors({
+    origin: 'http://localhost:9000', // Your frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -25,7 +33,11 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
   const port = app.get(ConfigService).get('port') as number;
-  console.log("Listening to: ", port);
+  console.log('Listening to: ', port);
   await app.listen(port ?? process.env.PORT ?? 3000);
 }
-bootstrap();
+
+bootstrap().catch((error) => {
+  console.error('Failed to start application:', error);
+  process.exit(1);
+});
