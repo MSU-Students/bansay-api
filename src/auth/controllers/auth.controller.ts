@@ -1,16 +1,16 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, Get } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { UserRegisterDto } from '../dto/user-register.dto';
-import { JwtPayload } from '../types/jwt-payload.interface';
-import { UserRole } from 'src/user/interfaces/user-role.enum';
-import { JwtService } from '@nestjs/jwt';
 import { Public } from '../decorators/is-public.decorator';
+import { UserLoginDto } from '../dto/user-login.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { GetUser } from '../decorators/get-user.decorator';
+import type { JwtPayload } from '../types/jwt-payload.interface';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private jwtService: JwtService,
   ) {}
 
   @Public()
@@ -20,20 +20,15 @@ export class AuthController {
   }
 
   @Public()
-  @Post('temp-token')
-  generateTempToken() {
-    const payload: JwtPayload = {
-      userId: '1',
-      email: 'test@example.com',
-      role: UserRole.ADMIN,
-    };
+  @HttpCode(200) // return 200 OK
+  @Post('login')
+  async login(@Body() userLoginDto: UserLoginDto) {
+    return this.authService.login(userLoginDto);
+  }
 
-    const token = this.jwtService.sign(payload);
-
-    return {
-      access_token: token,
-      token_type: 'Bearer',
-      expires_in: '1h',
-    };
+  @ApiBearerAuth()
+  @Get('me')
+  getMe(@GetUser() user: JwtPayload) {
+    return user;
   }
 }
