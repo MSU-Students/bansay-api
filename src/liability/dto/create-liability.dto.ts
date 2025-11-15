@@ -4,15 +4,16 @@ import {
   IsDateString,
   IsPositive,
   Min,
+  IsString,
+  IsNotEmpty,
 } from 'class-validator';
 import { LiabilityType } from '../types/liability-type.type';
 import { Type } from 'class-transformer';
 
 export class CreateLiabilityDto {
-  @IsNumber()
-  @IsPositive()
-  @Type(() => Number)
-  studentId: number;
+  @IsString()
+  @IsNotEmpty()
+  studentUsername: string;
 
   @IsEnum(LiabilityType)
   type: LiabilityType;

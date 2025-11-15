@@ -8,6 +8,7 @@ import {
   Param,
   Get,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { LiabilityService } from '../services/liability.service';
@@ -71,6 +72,17 @@ export class LiabilityController {
     return {
       message: 'Liability updated successfully',
       liability: updatedLiability,
+    };
+  }
+
+  @Delete(':id')
+  @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async softDelete(@Param('id') id: string): Promise<{ message: string }> {
+    await this.liabilityService.softDeleteLiability(Number(id));
+
+    return {
+      message: 'Liability soft-deleted successfully',
     };
   }
 }
