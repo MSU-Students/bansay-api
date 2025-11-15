@@ -1,14 +1,19 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Liability } from '../entities/liability.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
+import { LiabilityStatus } from '../types/liability-status.type';
+import { QueryLiabilityDto } from '../dto/query-liability.dto';
+import { JwtPayload } from 'src/auth/types/jwt-payload.interface';
 
 @Injectable()
 export class LiabilityService {
@@ -23,14 +28,14 @@ export class LiabilityService {
     createLiability: CreateLiabilityDto,
     issuerId: number,
   ): Promise<any> {
-    const { studentId, amount, type, dueDate } = createLiability;
+    const { studentUsername, amount, type, dueDate } = createLiability;
 
     const student = await this.userRepository.findOneBy({
-      username: String(studentId),
+      username: studentUsername,
     });
 
     if (!student)
-      throw new NotFoundException(`Student with ID ${studentId} not found`);
+      throw new NotFoundException(`Student with username ${studentUsername} not found`);
 
     const issuer = await this.userRepository.findOneBy({
       id: issuerId,
@@ -57,6 +62,30 @@ export class LiabilityService {
     } catch (error) {
       throw new BadRequestException(`Failed to create liability: ${error}`);
     }
+  }
+
+  async findMyLiabilities(user: JwtPayload): Promise<{
+    liabilities: Liability[];
+    totalOutstandingBalance: number;
+  }> {
+    const liabilities = await this.liabilityRepository.find({
+      where: {
+        student: { id: Number(user.userId) },
+      },
+      relations: ['issuer'],
+      order: {
+        dueDate: 'ASC',
+      },
+    });
+
+    const totalOutstandingBalance = liabilities
+      .filter((l) => l.status === LiabilityStatus.UNPAID)
+      .reduce((sum, liability) => sum + Number(liability.amount), 0);
+
+    return {
+      liabilities,
+      totalOutstandingBalance,
+    };
   }
 
   async findLiabilityById(id: number): Promise<Liability> {
@@ -92,5 +121,51 @@ export class LiabilityService {
     } catch (error) {
       throw new BadRequestException(`Failed to update liability: ${error}`);
     }
+  }
+
+async softDeleteLiability(id: number): Promise<void> {
+    const liability = await this.findLiabilityById(id);
+
+    if (liability.status === LiabilityStatus.PAID) {
+      throw new ConflictException('Cannot delete a liability that is already paid.');
+    }
+
+    try {
+      await this.liabilityRepository.softRemove(liability);
+    } catch (error) {
+      throw new InternalServerErrorException(`Failed to soft-delete liability: ${error}`);
+    }
+  }
+
+  async findAllLiabilities(
+    queryDto: QueryLiabilityDto,
+  ): Promise<Liability[]> {
+    const { status, studentUsername, sortBy, sortOrder } = queryDto;
+
+    const where: FindOptionsWhere<Liability> = {};
+
+    if (status) {
+      where.status = status;
+    }
+    if (studentUsername) {
+      where.student = { username: studentUsername };
+    }
+
+    const order: FindManyOptions<Liability>['order'] = {};
+    const allowedSortFields = ['dueDate', 'amount', 'status', 'type'];
+
+    if (sortBy && allowedSortFields.includes(sortBy)) {
+      order[sortBy] = sortOrder === 'DESC' ? 'DESC' : 'ASC';
+    } else {
+      order.dueDate = 'ASC';
+    }
+
+    const findOptions: FindManyOptions<Liability> = {
+      where,
+      relations: ['student', 'issuer'],
+      order,
+    };
+
+    return this.liabilityRepository.find(findOptions);
   }
 }

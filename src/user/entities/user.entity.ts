@@ -11,30 +11,38 @@ import {
 import { UserRole } from '../interfaces/user-role.enum';
 import { UserStatus } from '../interfaces/user-status.enum';
 import { Liability } from 'src/liability/entities/liability.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')
 @Index(['username'], { unique: true })
 @Index(['email'], { unique: true })
 @Index(['role', 'status'])
 export class User {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({ example: '123456' })
   @Column({ type: 'varchar', length: 64 })
-  username: string; // student_id or staff_id
+  username: string;
 
+  @ApiProperty({ example: 'John' })
   @Column({ type: 'varchar', length: 64, name: 'first_name' })
   firstName: string;
 
+  @ApiProperty({ example: 'Doe' })
   @Column({ type: 'varchar', length: 64, name: 'last_name' })
   lastName: string;
 
+  @ApiProperty({ example: 'john.doe@university.edu' })
   @Column({ type: 'varchar', length: 254 })
   email: string;
 
+  // NO @ApiProperty on password! This is correct.
   @Column({ type: 'varchar', length: 128, select: false })
-  password: string; // hashed password
+  password: string;
 
+  @ApiProperty({ enum: UserRole, example: UserRole.STUDENT })
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -43,6 +51,7 @@ export class User {
   })
   role: UserRole;
 
+  @ApiProperty({ enum: UserStatus, example: UserStatus.ACTIVE })
   @Column({
     type: 'enum',
     enum: UserStatus,
@@ -59,22 +68,11 @@ export class User {
   @OneToMany(() => Liability, (liability) => liability.issuer)
   issuedLiabilities: Liability[];
 
-  @CreateDateColumn({
-    type: 'timestamp',
-    name: 'created_at',
-    default: () => 'NOW()',
-  })
+  @ApiProperty()
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name: 'updated_at',
-  })
+  @ApiProperty()
+  @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at' })
   updatedAt: Date;
-
-  @DeleteDateColumn({
-    name: 'deleted_at',
-    default: null,
-  })
-  deletedAt?: Date;
 }
