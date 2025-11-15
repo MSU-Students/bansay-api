@@ -97,18 +97,17 @@ export class LiabilityService {
     }
   }
 
-  async cancelLiability(id: number): Promise<Liability> {
+async softDeleteLiability(id: number): Promise<void> {
     const liability = await this.findLiabilityById(id);
+
     if (liability.status === LiabilityStatus.PAID) {
-      throw new ConflictException('Cannot cancel a liability that is already paid.');
+      throw new ConflictException('Cannot delete a liability that is already paid.');
     }
 
-    liability.status = LiabilityStatus.CANCELLED;
-
     try {
-      return await this.liabilityRepository.save(liability);
+      await this.liabilityRepository.softRemove(liability);
     } catch (error) {
-      throw new InternalServerErrorException(`Failed to cancel liability: ${error}`);
+      throw new InternalServerErrorException(`Failed to soft-delete liability: ${error}`);
     }
   }
 }
