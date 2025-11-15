@@ -33,7 +33,7 @@ export class AuthService {
       const newUser = this.userRepository.create({
         ...userInput,
         password: hashedPassword,
-        status: UserStatus.PENDING,
+        status: UserStatus.ACTIVE,
       });
 
       const savedUser = await this.userRepository.save(newUser);
