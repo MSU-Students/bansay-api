@@ -9,6 +9,7 @@ import {
   Get,
   Patch,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { LiabilityService } from '../services/liability.service';
@@ -48,7 +49,6 @@ export class LiabilityController {
     @Req() req: RequestWithUser,
   ): Promise<any> {
     const issuerId = req.user.userId;
-
     const liability = (await this.liabilityService.createLiability(
       createLiabilityDto,
       Number(issuerId),
@@ -73,7 +73,6 @@ export class LiabilityController {
   async findAll(
     @Query() queryDto: QueryLiabilityDto,
   ): Promise<Liability[]> {
-
     return this.liabilityService.findAllLiabilities(queryDto);
   }
 
@@ -92,7 +91,6 @@ export class LiabilityController {
     liability: Liability;
   }> {
     const liability = await this.liabilityService.findLiabilityById(Number(id));
-
     return {
       message: 'Liability retrieved successfully',
       liability,
@@ -117,7 +115,6 @@ export class LiabilityController {
       Number(id),
       updateLiabilityDto,
     );
-
     return {
       message: 'Liability updated successfully',
       liability: updatedLiability,
@@ -127,11 +124,18 @@ export class LiabilityController {
   @Delete(':id')
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async softDelete(@Param('id') id: string): Promise<{ message: string }> {
+  @ApiOperation({ summary: 'Soft-delete a liability (Officer/Admin Only)' })
+  @ApiResponse({
+    status: 204,
+    description: 'Liability soft-deleted successfully.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
+  @ApiResponse({ status: 404, description: 'Liability not found' })
+  @ApiResponse({
+    status: 409,
+    description: 'Cannot delete a liability that is already paid',
+  })
+  async softDelete(@Param('id') id: string): Promise<void> {
     await this.liabilityService.softDeleteLiability(Number(id));
-
-    return {
-      message: 'Liability soft-deleted successfully',
-    };
   }
 }
