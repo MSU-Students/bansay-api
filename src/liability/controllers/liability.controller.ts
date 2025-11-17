@@ -59,7 +59,6 @@ export class LiabilityController {
   @Get()
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Find all liabilities (Officer/Admin Only)' })
-  @ApiQuery({ type: QueryLiabilityDto })
   @ApiResponse({
     status: 200,
     description: 'A list of liabilities.',
@@ -70,7 +69,7 @@ export class LiabilityController {
     @Query() queryDto: QueryLiabilityDto,
   ): Promise<Liability[]> {
     return this.liabilityService.findAllLiabilities(queryDto);
-  }
+  } 
 
   @Get(':id')
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
