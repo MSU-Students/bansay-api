@@ -26,7 +26,6 @@ import {
 } from '@nestjs/swagger';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
-import { LiabilityResponseDto } from '../dto/liability-response.dto';
 
 @ApiTags('Liability')
 @ApiBearerAuth()
@@ -41,24 +40,20 @@ export class LiabilityController {
   @ApiResponse({
     status: 201,
     description: 'Liability created successfully',
-    type: LiabilityResponseDto,
+    type: Liability,
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Not an Officer.' })
   @ApiResponse({ status: 404, description: 'Student not found' })
   async create(
     @Body() createLiabilityDto: CreateLiabilityDto,
     @Req() req: RequestWithUser,
-  ): Promise<LiabilityResponseDto> {
+  ): Promise<Liability> {
     const issuerId = req.user.userId;
-    const liability = (await this.liabilityService.createLiability(
+    
+    return (await this.liabilityService.createLiability(
       createLiabilityDto,
       Number(issuerId),
     )) as Liability;
-
-    return {
-      message: 'Liability created successfully',
-      liability,
-    };
   }
 
   @Get()
@@ -83,16 +78,12 @@ export class LiabilityController {
   @ApiResponse({
     status: 200,
     description: 'Liability retrieved successfully',
-    type: LiabilityResponseDto,
+    type: Liability,
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
   @ApiResponse({ status: 404, description: 'Liability not found' })
-  async findOne(@Param('id') id: string): Promise<LiabilityResponseDto> {
-    const liability = await this.liabilityService.findLiabilityById(Number(id));
-    return {
-      message: 'Liability retrieved successfully',
-      liability,
-    };
+  async findOne(@Param('id') id: string): Promise<Liability> {
+    return this.liabilityService.findLiabilityById(Number(id));
   }
 
   @Patch(':id')
@@ -101,22 +92,18 @@ export class LiabilityController {
   @ApiResponse({
     status: 200,
     description: 'Liability updated successfully',
-    type: LiabilityResponseDto,
+    type: Liability,
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
   @ApiResponse({ status: 404, description: 'Liability not found' })
   async update(
     @Param('id') id: string,
     @Body() updateLiabilityDto: UpdateLiabilityDto,
-  ): Promise<LiabilityResponseDto> {
-    const updatedLiability = await this.liabilityService.updateLiability(
+  ): Promise<Liability> {
+    return this.liabilityService.updateLiability(
       Number(id),
       updateLiabilityDto,
     );
-    return {
-      message: 'Liability updated successfully',
-      liability: updatedLiability,
-    };
   }
 
   @Delete(':id')
