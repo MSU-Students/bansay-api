@@ -26,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
+import { LiabilityResponseDto } from '../dto/liability-response.dto';
 
 @ApiTags('Liability')
 @ApiBearerAuth()
@@ -40,14 +41,14 @@ export class LiabilityController {
   @ApiResponse({
     status: 201,
     description: 'Liability created successfully',
-    type: Liability,
+    type: LiabilityResponseDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Not an Officer.' })
   @ApiResponse({ status: 404, description: 'Student not found' })
   async create(
     @Body() createLiabilityDto: CreateLiabilityDto,
     @Req() req: RequestWithUser,
-  ): Promise<any> {
+  ): Promise<LiabilityResponseDto> {
     const issuerId = req.user.userId;
     const liability = (await this.liabilityService.createLiability(
       createLiabilityDto,
@@ -82,14 +83,11 @@ export class LiabilityController {
   @ApiResponse({
     status: 200,
     description: 'Liability retrieved successfully',
-    type: Liability,
+    type: LiabilityResponseDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
   @ApiResponse({ status: 404, description: 'Liability not found' })
-  async findOne(@Param('id') id: string): Promise<{
-    message: string;
-    liability: Liability;
-  }> {
+  async findOne(@Param('id') id: string): Promise<LiabilityResponseDto> {
     const liability = await this.liabilityService.findLiabilityById(Number(id));
     return {
       message: 'Liability retrieved successfully',
@@ -103,14 +101,14 @@ export class LiabilityController {
   @ApiResponse({
     status: 200,
     description: 'Liability updated successfully',
-    type: Liability,
+    type: LiabilityResponseDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
   @ApiResponse({ status: 404, description: 'Liability not found' })
   async update(
     @Param('id') id: string,
     @Body() updateLiabilityDto: UpdateLiabilityDto,
-  ): Promise<{ message: string; liability: Liability }> {
+  ): Promise<LiabilityResponseDto> {
     const updatedLiability = await this.liabilityService.updateLiability(
       Number(id),
       updateLiabilityDto,
