@@ -13,6 +13,7 @@ import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { LiabilityStatus } from '../types/liability-status.type';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
+import type { JwtPayload } from 'src/auth/types/jwt-payload.interface';
 
 @Injectable()
 export class LiabilityService {
@@ -62,6 +63,30 @@ export class LiabilityService {
       throw new BadRequestException(`Failed to create liability: ${error}`);
     }
   }
+
+  async findMyLiabilities(user: JwtPayload): Promise<{
+    liabilities: Liability[];
+    totalOutstandingBalance: number;
+  }> {
+    const liabilities = await this.liabilityRepository.find({
+      where: {
+        student: { id: Number(user.userId) },
+      },
+      relations: ['issuer'],
+      order: {
+        dueDate: 'ASC',
+      },
+    });
+
+    const totalOutstandingBalance = liabilities
+      .filter((l) => l.status === LiabilityStatus.UNPAID)
+      .reduce((sum, liability) => sum + Number(liability.amount), 0);
+
+    return {
+      liabilities,
+      totalOutstandingBalance,
+    };
+  }a
 
   async findLiabilityById(id: number): Promise<Liability> {
     const liability = await this.liabilityRepository.findOne({
