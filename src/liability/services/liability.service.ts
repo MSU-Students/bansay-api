@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Liability } from '../entities/liability.entity';
@@ -9,6 +11,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
+import { LiabilityStatus } from '../types/liability-status.type';
 
 @Injectable()
 export class LiabilityService {
@@ -23,14 +26,14 @@ export class LiabilityService {
     createLiability: CreateLiabilityDto,
     issuerId: number,
   ): Promise<any> {
-    const { studentId, amount, type, dueDate } = createLiability;
+    const { studentUsername, amount, type, dueDate } = createLiability;
 
     const student = await this.userRepository.findOneBy({
-      username: String(studentId),
+      username: studentUsername,
     });
 
     if (!student)
-      throw new NotFoundException(`Student with ID ${studentId} not found`);
+      throw new NotFoundException(`Student with username ${studentUsername} not found`);
 
     const issuer = await this.userRepository.findOneBy({
       id: issuerId,
@@ -91,6 +94,20 @@ export class LiabilityService {
       return await this.liabilityRepository.save(liability);
     } catch (error) {
       throw new BadRequestException(`Failed to update liability: ${error}`);
+    }
+  }
+
+async softDeleteLiability(id: number): Promise<void> {
+    const liability = await this.findLiabilityById(id);
+
+    if (liability.status === LiabilityStatus.PAID) {
+      throw new ConflictException('Cannot delete a liability that is already paid.');
+    }
+
+    try {
+      await this.liabilityRepository.softRemove(liability);
+    } catch (error) {
+      throw new InternalServerErrorException(`Failed to soft-delete liability: ${error}`);
     }
   }
 }

@@ -11,9 +11,7 @@ import { RegisterResponseDto } from '../dto/register-response.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @ApiResponse({type: RegisterResponseDto})
