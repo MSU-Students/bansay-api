@@ -12,6 +12,8 @@ import * as bcrypt from 'bcrypt';
 import { UserStatus } from 'src/user/interfaces/user-status.enum';
 import { UserLoginDto } from '../dto/user-login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { LoginResponseDto } from '../dto/login-response.dto';
+import { RegisterResponseDto } from '../dto/register-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +23,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(userInput: UserRegisterDto): Promise<any> {
+  async register(userInput: UserRegisterDto): Promise<RegisterResponseDto> {
     const existingUser = await this.userRepository.findOneBy({
       username: userInput.username,
     });
@@ -55,7 +57,7 @@ export class AuthService {
   }
 
   // login METHOD
-  async login (userLoginDto: UserLoginDto) {
+  async login (userLoginDto: UserLoginDto): Promise<LoginResponseDto> {
     const user = await this.validateUser(userLoginDto);
 
     if (!user) {

@@ -3,9 +3,11 @@ import { AuthService } from '../services/auth.service';
 import { UserRegisterDto } from '../dto/user-register.dto';
 import { Public } from '../decorators/is-public.decorator';
 import { UserLoginDto } from '../dto/user-login.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { GetUser } from '../decorators/get-user.decorator';
 import type { JwtPayload } from '../types/jwt-payload.interface';
+import { LoginResponseDto } from '../dto/login-response.dto';
+import { RegisterResponseDto } from '../dto/register-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,15 +16,17 @@ export class AuthController {
   ) {}
 
   @Public()
+  @ApiResponse({type: RegisterResponseDto})
   @Post('register')
-  async register(@Body() userRegisterDto: UserRegisterDto): Promise<any> {
+  async register(@Body() userRegisterDto: UserRegisterDto): Promise<RegisterResponseDto> {
     return this.authService.register(userRegisterDto);
   }
 
   @Public()
   @HttpCode(200) // return 200 OK
+  @ApiResponse({type: LoginResponseDto})
   @Post('login')
-  async login(@Body() userLoginDto: UserLoginDto) {
+  async login(@Body() userLoginDto: UserLoginDto):Promise<LoginResponseDto> {
     return this.authService.login(userLoginDto);
   }
 
