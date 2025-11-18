@@ -9,10 +9,7 @@ async function bootstrap() {
 
   // Enable CORS - ADD THIS BEFORE useGlobalPipes
   app.enableCors({
-    origin: '*', // Your frontend URL
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Authorization',
+    origin: '*'
   });
 
   app.useGlobalPipes(
