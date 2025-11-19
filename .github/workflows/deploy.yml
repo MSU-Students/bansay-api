@@ -3,7 +3,7 @@ name: Deploy NestJS to AWS Lambda
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
