@@ -1,42 +1,38 @@
-name: Deploy to EC2
+name: Deploy NestJS to AWS Lambda
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v6-beta
-    
-    - name: Deploy to EC2
-      uses: easingthemes/ssh-deploy@v5.1.0
-      with:
-        SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-        ARGS: "-rlgoDzvc -i --delete"
-        SOURCE: "./"
-        REMOTE_HOST: ${{ secrets.EC2_HOST }}
-        REMOTE_USER: ${{ secrets.EC2_USER }}
-        SCRIPT_BEFORE: |
-            whoami
-            ls -al
-        SCRIPT_AFTER: |  
-          echo "Current directory: $(pwd)"
-          echo "Listing home directory:"
-          ls -la ~
-          echo "Installing Node.js..."
-          if ! command -v nvm &> /dev/null; then
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-          fi
-          nvm install node
-          echo "Installing PM2..."
-          if ! command -v pm2 &> /dev/null; then
-            npm install -g pm2
-          fi
-          npm install
-          npm run build
-          echo "Starting/restarting application..."
-          pm2 restart dist/main.js || pm2 start dist/main.js
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Serverless Framework
+        run: npm install -g serverless
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Build NestJS app for Lambda
+        run: npm run build:lambda # Or 'npm run build' depending on your script
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # Must match the region in serverless.yml
+
+      - name: Deploy to AWS Lambda
+        run: serverless deploy --stage prod
