@@ -26,6 +26,9 @@ import {
 } from '@nestjs/swagger';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
+import { MyLiabilitiesResponseDto } from '../dto/my-liabilities-response.dto';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import type { JwtPayload } from 'src/auth/types/jwt-payload.interface';
 
 @ApiTags('Liability')
 @ApiBearerAuth()
@@ -54,6 +57,21 @@ export class LiabilityController {
       createLiabilityDto,
       Number(issuerId),
     )) as Liability;
+  }
+
+  @Get('me')
+  @Roles(UserRole.STUDENT)
+  @ApiOperation({ summary: 'Find all liabilities for the logged-in student' })
+  @ApiResponse({
+    status: 200,
+    description: "A list of the student's liabilities and their total balance.",
+    type: MyLiabilitiesResponseDto,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden. Not a Student.' })
+  async findMy(
+    @GetUser() user: JwtPayload,
+  ): Promise<MyLiabilitiesResponseDto> {
+    return this.liabilityService.findMyLiabilities(user);
   }
 
   @Get()
