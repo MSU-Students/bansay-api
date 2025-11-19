@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
 // List of modules that are not essential for Lambda and can be ignored
 // or assumed to be available in the Node.js runtime
@@ -54,7 +53,7 @@ module.exports = function (options, webpack) {
 
     // Plugins configuration
     plugins: [
-      ...options.plugins,
+      ...(options.plugins || []),
       // Ignore specific lazy-loaded modules to reduce bundle size
       new webpack.IgnorePlugin({
         checkResource(resource) {
