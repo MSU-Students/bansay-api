@@ -1,26 +1,26 @@
 service: msu-liability-api-service
 
 provider:
-name: aws
-runtime: nodejs20.x
-region: us-east-1 # Choose your desired region
-# Attach necessary IAM roles/policies here
-iam:
- role:
-   statements:
-     - Effect: "Allow"
-       Action:
-         - "lambda:InvokeFunction"
-         - "apigateway:*"
-       Resource: "*"
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1 # Choose your desired region
+  # Attach necessary IAM roles/policies here
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "lambda:InvokeFunction"
+            - "apigateway:*"
+          Resource: "*"
 
 functions:
-api:
- handler: dist/lambda.handler # Path to your compiled handler file
- events:
-   - http:
-       method: ANY
-       path: /{proxy+}
-   - http:
-       method: ANY
-       path: /
+  api:
+    handler: dist/lambda.handler # Path to your compiled handler file
+    events:
+      - http:
+          method: ANY
+          path: /{proxy+}
+      - http:
+          method: ANY
+          path: /
