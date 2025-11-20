@@ -27,7 +27,7 @@ module.exports = function (options) {
       // The path to the output directory
       path: path.join(__dirname, 'dist'),
       // The name of the bundled file
-      filename: 's.js',
+      filename: 'lambda-bundle.js',
       // Specifies the module format for CommonJS (necessary for AWS Lambda)
       libraryTarget: 'commonjs2',
     },
