@@ -8,12 +8,12 @@ import {
 import { Liability } from '../entities/liability.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '@bansay/user/entities/user.entity';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { LiabilityStatus } from '../types/liability-status.type';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
-import type { JwtPayload } from 'src/auth/types/jwt-payload.interface';
+import type { JwtPayload } from '@bansay/auth/types/jwt-payload.interface';
 
 @Injectable()
 export class LiabilityService {

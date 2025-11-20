@@ -5,11 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserRegisterDto } from 'src/auth/dto/user-register.dto';
-import { User } from 'src/user/entities/user.entity';
+import { UserRegisterDto } from '@bansay/auth/dto/user-register.dto';
+import { User } from '@bansay/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserStatus } from 'src/user/interfaces/user-status.enum';
+import { UserStatus } from '@bansay/user/interfaces/user-status.enum';
 import { UserLoginDto } from '../dto/user-login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResponseDto } from '../dto/login-response.dto';

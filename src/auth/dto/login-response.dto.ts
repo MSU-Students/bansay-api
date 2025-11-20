@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from 'src/user/interfaces/user-role.enum';
+import { UserRole } from '@bansay/user/interfaces/user-role.enum';
 export class UserInfoDto {
     @ApiProperty()
     id: number; 

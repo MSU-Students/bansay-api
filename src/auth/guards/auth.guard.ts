@@ -10,7 +10,7 @@ import { Request } from 'express';
 import { JwtPayload } from '../types/jwt-payload.interface';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/is-public.decorator';
-import { UserRole } from 'src/user/interfaces/user-role.enum';
+import { UserRole } from '@bansay/user/interfaces/user-role.enum';
 import { ROLES_KEY } from '../decorators/role.decorator';
 
 @Injectable()

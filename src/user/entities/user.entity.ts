@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { UserRole } from '../interfaces/user-role.enum';
 import { UserStatus } from '../interfaces/user-status.enum';
-import { Liability } from 'src/liability/entities/liability.entity';
+import { Liability } from '@bansay/liability/entities/liability.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')

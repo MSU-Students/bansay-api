@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { StudentService } from 'src/user/services/student.service';
+import { StudentService } from '@bansay/user/services/student.service';
 import { StudentRegistrationDto } from '../dto/student-registration.dto';
 import { StudentDto } from '../dto/student.dto';
 import { StudentPatchDto } from '../dto/student-patch.dto';

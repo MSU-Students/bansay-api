@@ -4,7 +4,7 @@ const webpack = require('webpack');
 // List of modules that are not essential for Lambda and can be ignored
 // or assumed to be available in the Node.js runtime
 const lazyImports = [
-  '@nestjs/microservices/microservices-module',
+  '@nestjs/microservices',
   '@nestjs/websockets/socket-module',
   'cache-manager',
   'class-validator',
@@ -12,7 +12,7 @@ const lazyImports = [
   // Add other non-essential lazy imports here as needed
 ];
 
-module.exports = function (options, webpack) {
+module.exports = function (options) {
   return {
     // We target 'node' for a backend application
     target: 'node',
@@ -38,15 +38,25 @@ module.exports = function (options, webpack) {
     // Configure how modules are resolved (e.g., handling TypeScript extensions)
     resolve: {
       extensions: ['.ts', '.js'],
+      modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+      alias: {
+            "@bansay": path.resolve("./src")
+      }
     },
 
     // Module rules (loaders)
     module: {
-      rules: [
+       rules: [
         {
           test: /\.ts?$/,
-          use: 'ts-loader',
-          exclude: /node_modules/,
+          use: {
+            loader: 'ts-loader',
+            options: {
+              // Explicitly point to your tsconfig.json file
+              configFile: path.resolve(__dirname, 'tsconfig.json'),
+            },
+          },
+          exclude: /node_modules|spec\.ts/,
         },
       ],
     },
@@ -55,22 +65,16 @@ module.exports = function (options, webpack) {
     plugins: [
       ...(options.plugins || []),
       // Ignore specific lazy-loaded modules to reduce bundle size
+      // Use a simple RegEx pattern for the IgnorePlugin
       new webpack.IgnorePlugin({
-        checkResource(resource) {
-          if (lazyImports.includes(resource)) {
-            try {
-              require.resolve(resource);
-            } catch (err) {
-              return true;
-            }
-          }
-          return false;
-        },
+        resourceRegExp: new RegExp(lazyImports.join('|'))
       }),
     ],
 
     // Externals: you generally want to bundle all dependencies for Lambda, 
     // unless you use Lambda Layers. Setting to empty array ensures all node_modules are bundled.
-    externals: [],
+    externals: [
+       
+    ],
   };
 };

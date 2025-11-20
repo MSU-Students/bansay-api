@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { GetUsersQueryDto } from '../dto/user-query.dto';
-import { Roles } from 'src/auth/decorators/role.decorator';
+import { Roles } from '@bansay/auth/decorators/role.decorator';
 import { UserRole } from '../interfaces/user-role.enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserPatchDto } from '../dto/patch-user.dto';

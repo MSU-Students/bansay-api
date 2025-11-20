@@ -13,9 +13,9 @@ import {
 } from '@nestjs/common';
 import { CreateLiabilityDto } from '../dto/create-liability.dto';
 import { LiabilityService } from '../services/liability.service';
-import { UserRole } from 'src/user/interfaces/user-role.enum';
-import { Roles } from 'src/auth/decorators/role.decorator';
-import type { RequestWithUser } from 'src/auth/types/request-with-user.interface';
+import { UserRole } from '@bansay/user/interfaces/user-role.enum';
+import { Roles } from '@bansay/auth/decorators/role.decorator';
+import type { RequestWithUser } from '@bansay/auth/types/request-with-user.interface';
 import { Liability } from '../entities/liability.entity';
 import {
   ApiBearerAuth,
@@ -27,8 +27,8 @@ import {
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
 import { MyLiabilitiesResponseDto } from '../dto/my-liabilities-response.dto';
-import { GetUser } from 'src/auth/decorators/get-user.decorator';
-import type { JwtPayload } from 'src/auth/types/jwt-payload.interface';
+import { GetUser } from '@bansay/auth/decorators/get-user.decorator';
+import type { JwtPayload } from '@bansay/auth/types/jwt-payload.interface';
 
 @ApiTags('Liability')
 @ApiBearerAuth()
