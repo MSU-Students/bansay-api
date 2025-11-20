@@ -3,7 +3,7 @@ service: msu-liability-api-service
 provider:
   name: aws
   runtime: nodejs20.x
-  region: us-east-1 # Choose your desired region
+  region: us-west-2 # Choose your desired region
   # Attach necessary IAM roles/policies here
   iam:
     role:
