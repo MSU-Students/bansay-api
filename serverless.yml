@@ -23,10 +23,11 @@ package:
     # Include node_modules if you marked any driver (like mssql) as external
     - 'node_modules/**'
     # Include package.json if you need it for runtime information
-    - 'package.json' 
+    - 'package.json'
+    - 'index.js' 
 functions:
   api:
-    handler: dist/lambda-bundle.handler # Path to your compiled handler file
+    handler: index.handler
     events:
       - http:
           method: ANY
