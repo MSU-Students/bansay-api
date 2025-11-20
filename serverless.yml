@@ -16,7 +16,7 @@ provider:
 
 functions:
   api:
-    handler: dist/lambda.handler # Path to your compiled handler file
+    handler: dist/lambda-bundle.handler # Path to your compiled handler file
     events:
       - http:
           method: ANY
