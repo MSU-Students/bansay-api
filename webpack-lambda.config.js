@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const nodeExternals = require('webpack-node-externals');
 
 // List of modules that are not essential for Lambda and can be ignored
 // or assumed to be available in the Node.js runtime
@@ -52,10 +53,10 @@ module.exports = function (options) {
             loader: 'ts-loader',
             options: {
               // Explicitly point to your tsconfig.json file
-              configFile: path.resolve(__dirname, 'tsconfig.json'),
+              configFile: path.resolve(__dirname, 'tsconfig.build.json'),
             },
           },
-          exclude: /node_modules|spec\.ts/,
+          exclude: /node_modules/,
         },
       ],
     },
@@ -81,8 +82,6 @@ module.exports = function (options) {
 
     // Externals: you generally want to bundle all dependencies for Lambda, 
     // unless you use Lambda Layers. Setting to empty array ensures all node_modules are bundled.
-    externals: [
-       
-    ],
+    externals:nodeExternals(),
   };
 };
