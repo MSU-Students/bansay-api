@@ -33,6 +33,4 @@ functions:
       - http:
           method: ANY
           path: /{proxy+}
-      - http:
-          method: ANY
-          path: /
+          cors: true
