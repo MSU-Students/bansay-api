@@ -7,6 +7,7 @@ const lazyImports = [
   '@nestjs/microservices',
   '@nestjs/websockets/socket-module',
   'cache-manager',
+  'class-transformer',
   // Add other non-essential lazy imports here as needed
 ];
 
