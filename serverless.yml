@@ -25,6 +25,7 @@ package:
     # Include package.json if you need it for runtime information
     - 'package.json'
     - 'index.js' 
+    - '.env'
 functions:
   api:
     handler: index.handler

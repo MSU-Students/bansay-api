@@ -23,6 +23,8 @@ jobs:
 
       - name: Install project dependencies
         run: npm install
+      - name: Create Environment Variables
+        run: cp .env.production.local .env 
 
       - name: Build NestJS app for Lambda
         run: npm run build:lambda # Or 'npm run build' depending on your script
