@@ -7,8 +7,6 @@ const lazyImports = [
   '@nestjs/microservices',
   '@nestjs/websockets/socket-module',
   'cache-manager',
-  'class-validator',
-  'class-transformer',
   // Add other non-essential lazy imports here as needed
 ];
 
@@ -67,7 +65,16 @@ module.exports = function (options) {
       // Ignore specific lazy-loaded modules to reduce bundle size
       // Use a simple RegEx pattern for the IgnorePlugin
       new webpack.IgnorePlugin({
-        resourceRegExp: new RegExp(lazyImports.join('|'))
+        checkResource(resource) {
+          if (lazyImports.find(l => resource.startsWith(l))) {
+            try {
+              require.resolve(resource);
+            } catch (err) {
+              return true;
+            }
+          }
+          return false;
+        },
       }),
     ],
 
