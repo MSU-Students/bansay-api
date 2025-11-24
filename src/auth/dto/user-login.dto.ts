@@ -14,4 +14,9 @@ export class UserLoginDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @ApiProperty({ example: 'Student', description: 'Role of the user' })
+  @IsNotEmpty()
+  @IsString()
+  role: string;
 }
