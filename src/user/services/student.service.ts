@@ -27,7 +27,7 @@ export class StudentService {
         id: record.id,
         email: record.email,
         idNumber: record.idNumber,
-        fullName: `${record.firstName} ${record.middleName} ${record.lastName}`,
+        fullName: `${record.firstName} ${record.lastName}`,
       };
     });
   }
