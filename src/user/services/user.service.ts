@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GetUsersQueryDto } from '../dto/user-query.dto';
 import { UserPatchDto } from '../dto/patch-user.dto';
 import { StudentService } from './student.service';
+import { OfficerService } from './officer.service';
 import { UserStatus } from '../interfaces/user-status.enum';
 import { UserRole } from '../interfaces/user-role.enum';
 
@@ -17,6 +18,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private studentService: StudentService,
+    private officerService: OfficerService,
   ) {}
 
   async getUsers(filter: GetUsersQueryDto) {
@@ -69,15 +71,20 @@ export class UserService {
     // if user's status was pending and is now active, and role is student, create student record
     if (
       user.status === UserStatus.PENDING &&
-      userPatchDto.status === UserStatus.ACTIVE &&
-      user.role === UserRole.STUDENT
+      userPatchDto.status === UserStatus.ACTIVE
     ) {
-      await this.studentService.create({
+      const roleData = {
         idNumber: user.username,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-      });
+      };
+
+      if (user.role === UserRole.STUDENT) {
+        await this.studentService.create(roleData);
+      } else if (user.role === UserRole.OFFICER) {
+        await this.officerService.create(roleData);
+      }
     }
 
     return this.userRepository.findOne({
