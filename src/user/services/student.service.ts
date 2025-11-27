@@ -13,6 +13,14 @@ export class StudentService {
   ) {}
 
   async create(student: StudentRegistrationDto) {
+    // Check if student already exists
+    const existing = await this.repo.findOne({
+      where: { idNumber: student.idNumber },
+    });
+    if (existing) {
+      return existing;
+    }
+
     const record = this.repo.create({
       email: student.email,
       idNumber: student.idNumber,

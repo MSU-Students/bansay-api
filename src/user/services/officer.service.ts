@@ -7,8 +7,16 @@ import { OfficerDto } from '../dto/officer.dto';
 @Injectable()
 export class OfficerService {
   constructor(@InjectRepository(Officer) private repo: Repository<Officer>) {}
-
   async create(officer: OfficerDto) {
+    // Check if officer already exists
+    const existing = await this.repo.findOne({
+      where: { idNumber: officer.idNumber },
+    });
+
+    if (existing) {
+      return existing;
+    }
+
     const record = this.repo.create({
       email: officer.email,
       idNumber: officer.idNumber,
