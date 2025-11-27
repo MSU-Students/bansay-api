@@ -1,8 +1,17 @@
 service: msu-liability-api-service
-
+useDotEnv : true
+plugins:
+  - serverless-offline
 provider:
   name: aws
   runtime: nodejs20.x
+  environment:
+    JWT_SECRET : ${env:JWT_SECRET}
+    DATABASE_NAME : ${env:DATABASE_NAME}
+    DATABASE_HOST : ${env:DATABASE_HOST}
+    DB_USER : ${env:DB_USER}
+    DB_PASSWORD : ${env:DB_PASSWORD}
+    NODE_ENV : ${env:NODE_ENV}
   region: us-east-2 # Choose your desired region
   # Attach necessary IAM roles/policies here
   iam:
@@ -28,7 +37,7 @@ package:
     - '.env'
 functions:
   api:
-    handler: index.handler
+    handler: dist/lambda.handler
     events:
       - http:
           method: ANY
