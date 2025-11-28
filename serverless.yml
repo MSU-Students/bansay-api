@@ -14,6 +14,7 @@ provider:
     NODE_ENV : ${env:NODE_ENV}
   region: us-east-2 # Choose your desired region
   # Attach necessary IAM roles/policies here
+  timeout: 20 
   iam:
     role:
       statements:
@@ -22,6 +23,15 @@ provider:
             - "lambda:InvokeFunction"
             - "apigateway:*"
           Resource: "*"
+  vpc:
+    securityGroupIds:
+      # Use the Security Group ID you provided
+      - sg-0d2785803611c75b8
+    subnetIds:
+      # Use the Subnet IDs you provided
+      - subnet-0c12494f0c3ee3fd5
+      # Note: You listed subnet-0c12494f0c3ee3fd5 twice, ensure you have the correct unique list if any are different
+      - subnet-0c370fabcfdfc5c8a
 package:
   # Exclude all files first
   individually: true
