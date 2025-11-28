@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class OfficerDto {
-    @ApiProperty()
-    id: number;
+  @ApiProperty()
+  idNumber: string;
 
-    @ApiProperty()
-    fullName: string;
+  @ApiProperty()
+  email: string;
 
-    @ApiProperty()
-    idNumber: string;
+  @ApiProperty()
+  firstName: string;
 
-    @ApiProperty()
-    email: string;
+  @ApiProperty()
+  lastName: string;
 }

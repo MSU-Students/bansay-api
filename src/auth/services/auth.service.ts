@@ -35,7 +35,7 @@ export class AuthService {
       const newUser = this.userRepository.create({
         ...userInput,
         password: hashedPassword,
-        status: UserStatus.ACTIVE,
+        status: UserStatus.PENDING,
       });
 
       const savedUser = await this.userRepository.save(newUser);
@@ -57,7 +57,7 @@ export class AuthService {
   }
 
   // login METHOD
-  async login (userLoginDto: UserLoginDto): Promise<LoginResponseDto> {
+  async login(userLoginDto: UserLoginDto): Promise<LoginResponseDto> {
     const user = await this.validateUser(userLoginDto);
 
     if (!user) {
@@ -75,7 +75,7 @@ export class AuthService {
     };
 
     // sign the token
-    const accessToken = await this.jwtService.sign(payload);
+    const accessToken = await this.jwtService.signAsync(payload);
 
     return {
       message: 'Login successful',
