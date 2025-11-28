@@ -25,7 +25,7 @@ export class StudentController {
   constructor(private service: StudentService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a student' })
+  @ApiOperation({ summary: 'Create a student', operationId: 'createStudent' })
   create(@Body() student: StudentRegistrationDto) {
     return this.service.create(student);
   }
