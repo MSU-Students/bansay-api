@@ -47,7 +47,7 @@ package:
     - '.env'
 functions:
   api:
-    handler: dist/lambda.handler
+    handler: index.handler
     events:
       - http:
           method: ANY
