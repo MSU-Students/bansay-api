@@ -13,14 +13,6 @@ export class StudentService {
   ) {}
 
   async create(student: StudentRegistrationDto) {
-    // Check if student already exists
-    const existing = await this.repo.findOne({
-      where: { idNumber: student.idNumber },
-    });
-    if (existing) {
-      return existing;
-    }
-
     const record = this.repo.create({
       email: student.email,
       idNumber: student.idNumber,
@@ -30,9 +22,11 @@ export class StudentService {
     return await this.repo.save(record);
   }
   async findAll(filter?: Partial<Student>): Promise<StudentDto[]> {
-    const result = filter ? (await this.repo.find({
-      where: filter
-    })): (await this.repo.find());
+    const result = filter
+      ? await this.repo.find({
+          where: filter,
+        })
+      : await this.repo.find();
     return result.map((record) => {
       return {
         id: record.id,
