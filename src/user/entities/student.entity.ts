@@ -8,7 +8,7 @@ export class Student {
     firstName: string;
     @Column()
     lastName: string;
-    @Column()
+    @Column( { nullable: true } )
     middleName: string;
     @Column()
     idNumber: string;
