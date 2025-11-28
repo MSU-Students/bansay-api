@@ -81,9 +81,19 @@ export class UserService {
       };
 
       if (user.role === UserRole.STUDENT) {
-        await this.studentService.create(roleData);
+        const matches = await this.studentService.findAll({
+          idNumber: roleData.idNumber
+        })
+        if (matches.length == 0) {
+          await this.studentService.create(roleData);
+        }
       } else if (user.role === UserRole.OFFICER) {
-        await this.officerService.create(roleData);
+        const matches = await this.officerService.findAll({
+          idNumber: roleData.idNumber
+        })
+        if (matches.length == 0) {
+          await this.officerService.create(roleData);
+        }
       }
     }
 

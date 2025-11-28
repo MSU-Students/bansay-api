@@ -29,8 +29,11 @@ export class StudentService {
     });
     return await this.repo.save(record);
   }
-  async findAll(): Promise<StudentDto[]> {
-    return (await this.repo.find()).map((record) => {
+  async findAll(filter?: Partial<Student>): Promise<StudentDto[]> {
+    const result = filter ? (await this.repo.find({
+      where: filter
+    })): (await this.repo.find());
+    return result.map((record) => {
       return {
         id: record.id,
         email: record.email,

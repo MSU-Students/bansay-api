@@ -26,8 +26,11 @@ export class OfficerService {
     return await this.repo.save(record);
   }
 
-  async findAll(): Promise<OfficerDto[]> {
-    return (await this.repo.find()).map((record) => {
+  async findAll(filter?: Partial<OfficerDto>): Promise<OfficerDto[]> {
+    const result = filter ?   (await this.repo.find({
+      where: filter
+    })):  (await this.repo.find());
+    return result.map((record) => {
       return {
         id: record.id,
         email: record.email,
