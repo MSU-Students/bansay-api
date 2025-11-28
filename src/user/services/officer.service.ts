@@ -6,16 +6,39 @@ import { OfficerDto } from '../dto/officer.dto';
 
 @Injectable()
 export class OfficerService {
-    constructor(@InjectRepository(Officer) private repo: Repository<Officer>) {}
+  constructor(@InjectRepository(Officer) private repo: Repository<Officer>) {}
+  async create(officer: OfficerDto) {
+    // Check if officer already exists
+    const existing = await this.repo.findOne({
+      where: { idNumber: officer.idNumber },
+    });
 
-    async findAll(): Promise<OfficerDto[]> {
-        return (await this.repo.find()).map((record) => {
-            return {
-                id: record.id,
-                email: record.email,
-                idNumber: record.idNumber,
-                fullName: `${record.firstName} ${record.middleName} ${record.lastName}`,
-            };
-        });
+    if (existing) {
+      return existing;
     }
+
+    const record = this.repo.create({
+      email: officer.email,
+      idNumber: officer.idNumber,
+      firstName: officer.firstName,
+      lastName: officer.lastName,
+    });
+    return await this.repo.save(record);
+  }
+
+  async findAll(filter?: Partial<OfficerDto>): Promise<OfficerDto[]> {
+    const result = filter ?   (await this.repo.find({
+      where: filter
+    })):  (await this.repo.find());
+    return result.map((record) => {
+      return {
+        id: record.id,
+        email: record.email,
+        idNumber: record.idNumber,
+        firstName: record.firstName,
+        lastName: record.lastName,
+        middleName: record.middleName,
+      };
+    });
+  }
 }

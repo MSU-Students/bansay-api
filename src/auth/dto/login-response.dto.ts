@@ -7,7 +7,7 @@ export class UserInfoDto {
     username: string;
     @ApiProperty() 
     email: string;
-    @ApiProperty() 
+    @ApiProperty({enum: UserRole}) 
     role: UserRole;
 }
 
