@@ -9,10 +9,12 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
 import { LiabilityType } from '../types/liability-type.type';
 import { LiabilityStatus } from '../types/liability-status.type';
 import { ApiProperty } from '@nestjs/swagger';
+import { Appeal } from '@bansay/appeal/entities/appeal.entity';
 
 @Entity('liabilities')
 @Index(['student'])
@@ -71,4 +73,9 @@ export class Liability {
 
   @DeleteDateColumn({ type: 'timestamptz', name: 'deleted_at', select: false })
   deletedAt: Date;
+
+  @OneToMany(() => Appeal, (appeal) => appeal.liability, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  appeals: Appeal[];
 }

@@ -5,13 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
 import { UserRole } from '../interfaces/user-role.enum';
 import { UserStatus } from '../interfaces/user-status.enum';
 import { Liability } from '@bansay/liability/entities/liability.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Appeal } from '@bansay/appeal/entities/appeal.entity';
 
 @Entity('users')
 @Index(['username'], { unique: true })
@@ -67,6 +67,11 @@ export class User {
 
   @OneToMany(() => Liability, (liability) => liability.issuer)
   issuedLiabilities: Liability[];
+
+  @OneToMany(() => Appeal, (appeal) => appeal.student, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  appeals: Appeal[];
 
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
