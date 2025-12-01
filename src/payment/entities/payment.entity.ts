@@ -21,7 +21,7 @@ import { User } from '@bansay/user/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaymentStatus } from '../types/payment-status.type';
 
-@Entity('payments')
+@Entity('payment')
 @Index(['liability'])
 @Index(['student'])
 @Index(['status'])
