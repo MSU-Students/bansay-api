@@ -9,10 +9,12 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
 import { LiabilityType } from '../types/liability-type.type';
 import { LiabilityStatus } from '../types/liability-status.type';
 import { ApiProperty } from '@nestjs/swagger';
+import { Payment } from '@bansay/payment/entities/payment.entity';
 
 @Entity('liabilities')
 @Index(['student'])
@@ -34,6 +36,11 @@ export class Liability {
   @ManyToOne(() => User, (user) => user.issuedLiabilities)
   @JoinColumn({ name: 'issuer_id' })
   issuer: User;
+
+  @OneToMany(() => Payment, (payment) => payment.liability, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  payments: Payment[];
 
   @ApiProperty({ enum: LiabilityType, example: LiabilityType.FINE })
   @Column({
