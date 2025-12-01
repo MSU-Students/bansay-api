@@ -12,6 +12,7 @@ import { UserStatus } from '../interfaces/user-status.enum';
 import { Liability } from '@bansay/liability/entities/liability.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Payment } from '@bansay/payment/entities/payment.entity';
+import { Appeal } from '@bansay/appeal/entities/appeal.entity';
 
 @Entity('users')
 @Index(['username'], { unique: true })
@@ -74,6 +75,10 @@ export class User {
     cascade: ['soft-remove', 'recover'],
   })
   payments: Payment[];
+  @OneToMany(() => Appeal, (appeal) => appeal.student, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  appeals: Appeal[];
 
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })

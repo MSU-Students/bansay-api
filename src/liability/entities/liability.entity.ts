@@ -15,6 +15,7 @@ import { LiabilityType } from '../types/liability-type.type';
 import { LiabilityStatus } from '../types/liability-status.type';
 import { ApiProperty } from '@nestjs/swagger';
 import { Payment } from '@bansay/payment/entities/payment.entity';
+import { Appeal } from '@bansay/appeal/entities/appeal.entity';
 
 @Entity('liabilities')
 @Index(['student'])
@@ -45,6 +46,11 @@ export class Liability {
     cascade: ['soft-remove', 'recover'],
   })
   payments: Payment[];
+
+  @OneToMany(() => Appeal, (appeal) => appeal.liability, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  appeals: Appeal[];
 
   @ApiProperty({ enum: LiabilityType, example: LiabilityType.FINE })
   @Column({
