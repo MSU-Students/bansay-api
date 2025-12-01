@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
 import { UserRole } from '../interfaces/user-role.enum';
@@ -18,6 +17,8 @@ import { Payment } from '@bansay/payment/entities/payment.entity';
 @Index(['username'], { unique: true })
 @Index(['email'], { unique: true })
 @Index(['role', 'status'])
+@Index(['status', 'created_at'])
+@Index(['role', 'created_at'])
 export class User {
   @ApiProperty()
   @PrimaryGeneratedColumn()
