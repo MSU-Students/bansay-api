@@ -26,6 +26,8 @@ import { PaymentStatus } from '../types/payment-status.type';
 @Index(['student'])
 @Index(['status'])
 @Index(['paymentDate'])
+@Index(['student', 'status'])
+@Index(['liability', 'status'])
 @Index(['referenceNumber'], { unique: true })
 export class Payment {
   @ApiProperty()
