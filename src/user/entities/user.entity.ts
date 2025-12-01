@@ -17,8 +17,8 @@ import { Payment } from '@bansay/payment/entities/payment.entity';
 @Index(['username'], { unique: true })
 @Index(['email'], { unique: true })
 @Index(['role', 'status'])
-@Index(['status', 'created_at'])
-@Index(['role', 'created_at'])
+@Index(['status', 'createdAt'])
+@Index(['role', 'createdAt'])
 export class User {
   @ApiProperty()
   @PrimaryGeneratedColumn()
