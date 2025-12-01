@@ -22,6 +22,10 @@ import { Payment } from '@bansay/payment/entities/payment.entity';
 @Index(['student', 'status'])
 @Index(['status'])
 @Index(['dueDate'])
+@Index(['student', 'dueDate'])
+@Index(['status', 'dueDate'])
+@Index(['student', 'type', 'status'])
+@Index(['created_at', 'status'])
 export class Liability {
   @ApiProperty()
   @PrimaryGeneratedColumn()
