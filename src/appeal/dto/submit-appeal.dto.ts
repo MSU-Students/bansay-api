@@ -16,6 +16,5 @@ export class SubmitAppealDto {
 
   @ApiProperty({ example: 'I was hospitalized', required: false })
   @IsString()
-  @IsOptional()
-  remarks?: string;
+  remarks: string;
 }
