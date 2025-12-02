@@ -10,11 +10,11 @@ import { GetUser } from '@bansay/auth/decorators/get-user.decorator';
 
 @Controller('appeal')
 @ApiBearerAuth()
-@Roles(UserRole.STUDENT)
 export class AppealController {
   constructor(private readonly appealService: AppealService) {}
 
   @Post()
+  @Roles(UserRole.STUDENT)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Submit a new appeal' })
   @ApiResponse({
