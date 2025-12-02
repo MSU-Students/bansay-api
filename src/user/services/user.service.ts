@@ -52,22 +52,15 @@ export class UserService {
       throw new BadRequestException('Invalid filter parameters');
     }
   }
-
   async patch(userId: string, userPatchDto: UserPatchDto) {
-    // Get user before updating to check old status
     const user = await this.userRepository.findOne({
-      where: { id: Number(userId) },
+      where: { username: userId },
     });
 
     if (!user) throw new NotFoundException('User not found.');
-
-    const result = await this.userRepository.update(
-      Number(userId),
-      userPatchDto,
-    );
+    const result = await this.userRepository.update(user.id, userPatchDto);
 
     if (result.affected === 0) throw new NotFoundException('User not found.');
-
     // if user's status was pending and is now active, and role is student, create student record
     if (
       user.status === UserStatus.PENDING &&
@@ -78,19 +71,21 @@ export class UserService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        middleName: '',
       };
 
       if (user.role === UserRole.STUDENT) {
         const matches = await this.studentService.findAll({
-          idNumber: roleData.idNumber
-        })
+          idNumber: roleData.idNumber,
+        });
+
         if (matches.length == 0) {
           await this.studentService.create(roleData);
         }
       } else if (user.role === UserRole.OFFICER) {
         const matches = await this.officerService.findAll({
-          idNumber: roleData.idNumber
-        })
+          idNumber: roleData.idNumber,
+        });
         if (matches.length == 0) {
           await this.officerService.create(roleData);
         }
@@ -98,7 +93,7 @@ export class UserService {
     }
 
     return this.userRepository.findOne({
-      where: { id: Number(userId) },
+      where: { username: userId },
       select: [
         'id',
         'username',

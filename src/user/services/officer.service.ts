@@ -30,7 +30,6 @@ export class OfficerService {
         idNumber: record.idNumber,
         firstName: record.firstName,
         lastName: record.lastName,
-        middleName: record.middleName,
       };
     });
   }
