@@ -1,4 +1,6 @@
 import {
+  BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -37,6 +39,17 @@ export class AppealService {
       throw new ForbiddenException(
         'You can only submit appeals for your own liabilities',
       );
+
+    if (liability.status == 'Paid' || liability.status == 'Cancelled')
+      throw new BadRequestException('Cannot appeal a cleared liability');
+
+    const pendingAppeal = await this.appealRepository.findOne({
+      where: { liability: { id: submitAppealDto.liabilityId } },
+      relations: ['liability'],
+    });
+
+    if (pendingAppeal)
+      throw new ConflictException('Appeal already exists for this liability');
 
     const appeal = this.appealRepository.create({
       ...submitAppealDto,
