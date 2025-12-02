@@ -14,6 +14,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { Liability } from './liability/entities/liability.entity';
 import { Appeal } from './appeal/entities/appeal.entity';
+import { AppealModule } from './appeal/appeal.module';
 
 @Module({
   imports: [
@@ -35,13 +36,13 @@ import { Appeal } from './appeal/entities/appeal.entity';
           database: configService.get('database.dbName') || 'bansay_db',
           entities: [Student, User, Officer, Liability, Appeal],
           synchronize: true,
-          extra: isLocal
-            ? undefined
-            : {
-                ssl: {
-                  rejectUnauthorized: false,
-                },
-              },
+          // extra: isLocal
+          //   ? undefined
+          //   : {
+          //       ssl: {
+          //         rejectUnauthorized: false,
+          //       },
+          //     },
         };
       },
       inject: [ConfigService],
@@ -49,6 +50,7 @@ import { Appeal } from './appeal/entities/appeal.entity';
     LiabilityModule,
     UserModule,
     AuthModule,
+    AppealModule,
   ],
   controllers: [AppController],
   providers: [
