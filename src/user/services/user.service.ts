@@ -74,6 +74,7 @@ export class UserService {
       userPatchDto.status === UserStatus.ACTIVE
     ) {
       const roleData = {
+        id: user.id,
         idNumber: user.username,
         email: user.email,
         firstName: user.firstName,
@@ -82,15 +83,15 @@ export class UserService {
 
       if (user.role === UserRole.STUDENT) {
         const matches = await this.studentService.findAll({
-          idNumber: roleData.idNumber
-        })
+          idNumber: roleData.idNumber,
+        });
         if (matches.length == 0) {
           await this.studentService.create(roleData);
         }
       } else if (user.role === UserRole.OFFICER) {
         const matches = await this.officerService.findAll({
-          idNumber: roleData.idNumber
-        })
+          idNumber: roleData.idNumber,
+        });
         if (matches.length == 0) {
           await this.officerService.create(roleData);
         }
