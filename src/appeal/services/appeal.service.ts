@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -37,6 +38,9 @@ export class AppealService {
       throw new ForbiddenException(
         'You can only submit appeals for your own liabilities',
       );
+
+    if (liability.status == 'Paid' || liability.status == 'Cancelled')
+      throw new BadRequestException('Cannot appeal a cleared liability');
 
     const appeal = this.appealRepository.create({
       ...submitAppealDto,

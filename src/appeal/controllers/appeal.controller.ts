@@ -27,6 +27,10 @@ export class AppealController {
     description: "Cannot appeal another student's liability",
   })
   @ApiResponse({ status: 404, description: 'Liability not found' })
+  @ApiResponse({
+    status: 400,
+    description: 'Cannot appeal a cleared liability',
+  })
   async submitAppeal(
     @GetUser() user: JwtPayload,
     @Body() submitAppealDto: SubmitAppealDto,
