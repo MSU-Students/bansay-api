@@ -35,13 +35,13 @@ import { Appeal } from './appeal/entities/appeal.entity';
           database: configService.get('database.dbName') || 'bansay_db',
           entities: [Student, User, Officer, Liability, Appeal],
           synchronize: true,
-          // extra: isLocal
-          //   ? undefined
-          //   : {
-          //       ssl: {
-          //         rejectUnauthorized: false,
-          //       },
-          //     },
+          extra: isLocal
+            ? undefined
+            : {
+                ssl: {
+                  rejectUnauthorized: false,
+                },
+              },
         };
       },
       inject: [ConfigService],
