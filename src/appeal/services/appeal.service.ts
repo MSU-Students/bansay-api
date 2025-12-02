@@ -8,11 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Appeal } from '../entities/appeal.entity';
 import { Liability } from '@bansay/liability/entities/liability.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { SubmitAppealDto } from '../dto/submit-appeal.dto';
 import { AppealStatus } from '../types/appeal-status.type';
+import { QueryAppealDto } from '../dto/query-appeal.dto';
 import { LiabilityStatus } from '@bansay/liability/types/liability-status.type';
-import { AppealPatchDto } from '../dto/patch-appeal.dto';
 
 @Injectable()
 export class AppealService {
@@ -66,29 +66,37 @@ export class AppealService {
     return await this.appealRepository.save(appeal);
   }
 
-  async patch(appealId: string, appealPatchDto: AppealPatchDto) {
-    const appeal = await this.appealRepository.findOne({
-      where: { id: Number(appealId) },
-      relations: ['liability'],
-    });
+  async getAppeals(queryDto: QueryAppealDto) {
+    const { status } = queryDto;
 
-    if (!appeal) throw new NotFoundException('Appeal not found.');
+    const where: FindOptionsWhere<Appeal> = {};
+    if (status) where.status = status;
 
-    if (appealPatchDto.status === AppealStatus.APPROVED && appeal.liability) {
-      await this.liabilityRepository.update(appeal.liability.id, {
-        status: LiabilityStatus.CANCELLED,
+    try {
+      const appeals = await this.appealRepository.find({
+        where,
+        select: [
+          'id',
+          'liability',
+          'student',
+          'reasonType',
+          'remarks',
+          'proofUrl',
+          'status',
+          'createdAt',
+        ],
+        relations: {
+          liability: true,
+          student: true,
+        },
       });
+
+      return {
+        data: appeals,
+        count: appeals.length,
+      };
+    } catch {
+      throw new BadRequestException('Invalid query parameters');
     }
-
-    const result = await this.appealRepository.update(
-      Number(appealId),
-      appealPatchDto,
-    );
-
-    if (result.affected === 0) throw new NotFoundException('Appeal not found.');
-
-    return this.appealRepository.findOne({
-      where: { id: Number(appealId) },
-    });
   }
 }
