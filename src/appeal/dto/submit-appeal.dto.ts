@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsString, IsOptional } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AppealReasonType } from '../types/appeal-reason.type';
 

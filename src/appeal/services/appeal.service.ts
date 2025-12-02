@@ -39,18 +39,6 @@ export class AppealService {
         'You can only submit appeals for your own liabilities',
       );
 
-    const existingAppeal = await this.appealRepository.findOne({
-      where: {
-        liability: { id: submitAppealDto.liabilityId },
-        student: { id: studentId },
-      },
-    });
-
-    if (existingAppeal)
-      throw new ConflictException(
-        'An appeal already exists for this liability',
-      );
-
     const appeal = this.appealRepository.create({
       ...submitAppealDto,
       liability: { id: submitAppealDto.liabilityId },
