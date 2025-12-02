@@ -14,17 +14,19 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @ApiResponse({type: RegisterResponseDto})
+  @ApiResponse({ type: RegisterResponseDto })
   @Post('register')
-  async register(@Body() userRegisterDto: UserRegisterDto): Promise<RegisterResponseDto> {
+  async register(
+    @Body() userRegisterDto: UserRegisterDto,
+  ): Promise<RegisterResponseDto> {
     return this.authService.register(userRegisterDto);
   }
 
   @Public()
   @HttpCode(200) // return 200 OK
-  @ApiResponse({type: LoginResponseDto})
+  @ApiResponse({ type: LoginResponseDto })
   @Post('login')
-  async login(@Body() userLoginDto: UserLoginDto):Promise<LoginResponseDto> {
+  async login(@Body() userLoginDto: UserLoginDto): Promise<LoginResponseDto> {
     return this.authService.login(userLoginDto);
   }
 

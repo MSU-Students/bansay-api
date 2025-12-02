@@ -9,6 +9,7 @@ export class SubmitAppealDto {
 
   @ApiProperty({
     enum: AppealReasonType,
+    enumName: 'AppealReasonType',
     example: AppealReasonType.VALID_EXCUSE,
   })
   @IsEnum(AppealReasonType)
