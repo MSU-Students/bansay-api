@@ -31,6 +31,10 @@ export class AppealController {
     status: 400,
     description: 'Cannot appeal a cleared liability',
   })
+  @ApiResponse({
+    status: 409,
+    description: 'Appeal already exists for this liability',
+  })
   async submitAppeal(
     @GetUser() user: JwtPayload,
     @Body() submitAppealDto: SubmitAppealDto,
