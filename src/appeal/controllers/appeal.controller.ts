@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
 } from '@nestjs/common';
@@ -64,5 +65,27 @@ export class AppealController {
   })
   getAppeals(@Query() query: QueryAppealDto) {
     return this.appealService.getAppeals(query);
+  }
+
+  @Get(':id')
+  @Roles(UserRole.OFFICER)
+  @ApiOperation({
+    summary: 'Get appeal by ID (Officer only)',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Appeal retrieved successfully',
+    type: Appeal,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Appeal not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden. Insufficient role',
+  })
+  getAppealById(@Param('id') id: number) {
+    return this.appealService.getAppealById(id);
   }
 }
