@@ -35,7 +35,9 @@ export class LiabilityService {
     });
 
     if (!student)
-      throw new NotFoundException(`Student with username ${studentUsername} not found`);
+      throw new NotFoundException(
+        `Student with username ${studentUsername} not found`,
+      );
 
     const issuer = await this.userRepository.findOneBy({
       id: issuerId,
@@ -86,9 +88,10 @@ export class LiabilityService {
       liabilities,
       totalOutstandingBalance,
     };
-  }a
+  }
 
   async findLiabilityById(id: number): Promise<Liability> {
+    console.log('ID: ', id);
     const liability = await this.liabilityRepository.findOne({
       where: { id },
       relations: ['student', 'issuer'],
@@ -123,23 +126,25 @@ export class LiabilityService {
     }
   }
 
-async softDeleteLiability(id: number): Promise<void> {
+  async softDeleteLiability(id: number): Promise<void> {
     const liability = await this.findLiabilityById(id);
 
     if (liability.status === LiabilityStatus.PAID) {
-      throw new ConflictException('Cannot delete a liability that is already paid.');
+      throw new ConflictException(
+        'Cannot delete a liability that is already paid.',
+      );
     }
 
     try {
       await this.liabilityRepository.softRemove(liability);
     } catch (error) {
-      throw new InternalServerErrorException(`Failed to soft-delete liability: ${error}`);
+      throw new InternalServerErrorException(
+        `Failed to soft-delete liability: ${error}`,
+      );
     }
   }
 
-  async findAllLiabilities(
-    queryDto: QueryLiabilityDto,
-  ): Promise<Liability[]> {
+  async findAllLiabilities(queryDto: QueryLiabilityDto): Promise<Liability[]> {
     const { status, studentUsername, sortBy, sortOrder } = queryDto;
 
     const where: FindOptionsWhere<Liability> = {};

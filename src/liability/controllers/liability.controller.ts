@@ -22,7 +22,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiTags,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { UpdateLiabilityDto } from '../dto/update-liability.dto';
 import { QueryLiabilityDto } from '../dto/query-liability.dto';
@@ -96,6 +95,7 @@ export class LiabilityController {
   @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
   @ApiResponse({ status: 404, description: 'Liability not found' })
   async findOne(@Param('id') id: string): Promise<Liability> {
+    console.log('ID:', id);
     return this.liabilityService.findLiabilityById(Number(id));
   }
 
