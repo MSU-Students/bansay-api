@@ -11,6 +11,7 @@ import { Liability } from '@bansay/liability/entities/liability.entity';
 import { Repository } from 'typeorm';
 import { SubmitAppealDto } from '../dto/submit-appeal.dto';
 import { AppealStatus } from '../types/appeal-status.type';
+import { LiabilityStatus } from '@bansay/liability/types/liability-status.type';
 
 @Injectable()
 export class AppealService {
@@ -40,7 +41,10 @@ export class AppealService {
         'You can only submit appeals for your own liabilities',
       );
 
-    if (liability.status == 'Paid' || liability.status == 'Cancelled')
+    if (
+      liability.status == LiabilityStatus.PAID ||
+      liability.status == LiabilityStatus.CANCELLED
+    )
       throw new BadRequestException('Cannot appeal a cleared liability');
 
     const pendingAppeal = await this.appealRepository.findOne({
