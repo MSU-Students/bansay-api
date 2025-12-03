@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { AppealService } from '../services/appeal.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Appeal } from '../entities/appeal.entity';
@@ -7,6 +15,7 @@ import { UserRole } from '@bansay/user/interfaces/user-role.enum';
 import { Roles } from '@bansay/auth/decorators/role.decorator';
 import type { JwtPayload } from '@bansay/auth/types/jwt-payload.interface';
 import { GetUser } from '@bansay/auth/decorators/get-user.decorator';
+import { AppealPatchDto } from '../dto/patch-appeal.dto';
 
 @Controller('appeal')
 @ApiBearerAuth()
@@ -41,5 +50,11 @@ export class AppealController {
   ): Promise<Appeal> {
     const studentId = Number(user.userId);
     return this.appealService.submitAppeal(studentId, submitAppealDto);
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  patchAppeal(@Param('id') id: string, @Body() appealPatchDto: AppealPatchDto) {
+    return this.appealService.patch(id, appealPatchDto);
   }
 }
