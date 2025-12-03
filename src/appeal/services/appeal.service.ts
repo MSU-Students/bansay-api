@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { SubmitAppealDto } from '../dto/submit-appeal.dto';
 import { AppealStatus } from '../types/appeal-status.type';
 import { LiabilityStatus } from '@bansay/liability/types/liability-status.type';
+import { AppealPatchDto } from '../dto/patch-appeal.dto';
 
 @Injectable()
 export class AppealService {
@@ -63,5 +64,31 @@ export class AppealService {
     });
 
     return await this.appealRepository.save(appeal);
+  }
+
+  async patch(appealId: string, appealPatchDto: AppealPatchDto) {
+    const appeal = await this.appealRepository.findOne({
+      where: { id: Number(appealId) },
+      relations: ['liability'],
+    });
+
+    if (!appeal) throw new NotFoundException('Appeal not found.');
+
+    if (appealPatchDto.status === AppealStatus.APPROVED && appeal.liability) {
+      await this.liabilityRepository.update(appeal.liability.id, {
+        status: LiabilityStatus.CANCELLED,
+      });
+    }
+
+    const result = await this.appealRepository.update(
+      Number(appealId),
+      appealPatchDto,
+    );
+
+    if (result.affected === 0) throw new NotFoundException('Appeal not found.');
+
+    return this.appealRepository.findOne({
+      where: { id: Number(appealId) },
+    });
   }
 }
