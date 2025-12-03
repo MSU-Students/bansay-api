@@ -2,7 +2,9 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -93,6 +95,25 @@ export class AppealService {
       };
     } catch {
       throw new BadRequestException('Invalid query parameters');
+    }
+  }
+
+  async getAppealById(id: number) {
+    try {
+      const appeal = await this.appealRepository.findOne({
+        where: { id },
+        relations: {
+          liability: true,
+          student: true,
+        },
+      });
+
+      if (!appeal)
+        throw new NotFoundException(`Appeal with ID ${id} not found`);
+
+      return appeal;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
   }
 }
