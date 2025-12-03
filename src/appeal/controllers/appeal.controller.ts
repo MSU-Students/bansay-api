@@ -20,7 +20,7 @@ import { GetUser } from '@bansay/auth/decorators/get-user.decorator';
 import { AppealPatchDto } from '../dto/patch-appeal.dto';
 import { QueryAppealDto } from '../dto/query-appeal.dto';
 
-@Controller('appeal')
+@Controller('appeals')
 @ApiBearerAuth()
 export class AppealController {
   constructor(private readonly appealService: AppealService) {}
@@ -92,6 +92,9 @@ export class AppealController {
   @Get()
   @Roles(UserRole.OFFICER)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'List all appeals (Officer only)',
+  })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid query parameters',
