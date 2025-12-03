@@ -54,6 +54,34 @@ export class AppealController {
 
   @Patch(':id')
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Partially update an appeal' })
+  @ApiResponse({
+    status: 200,
+    description: 'Appeal successfully updated',
+    schema: {
+      example: {
+        id: 1,
+        status: 'Approved',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid request data or status transition',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - insufficient permissions',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Appeal not found',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Appeal cannot be modified in its current state',
+  })
   patchAppeal(@Param('id') id: string, @Body() appealPatchDto: AppealPatchDto) {
     return this.appealService.patch(id, appealPatchDto);
   }
