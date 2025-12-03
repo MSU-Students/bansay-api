@@ -8,9 +8,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Appeal } from '../entities/appeal.entity';
 import { Liability } from '@bansay/liability/entities/liability.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { SubmitAppealDto } from '../dto/submit-appeal.dto';
 import { AppealStatus } from '../types/appeal-status.type';
+import { QueryAppealDto } from '../dto/query-appeal.dto';
 
 @Injectable()
 export class AppealService {
@@ -59,5 +60,39 @@ export class AppealService {
     });
 
     return await this.appealRepository.save(appeal);
+  }
+
+  async getAppeals(queryDto: QueryAppealDto) {
+    const { status } = queryDto;
+
+    const where: FindOptionsWhere<Appeal> = {};
+    if (status) where.status = status;
+
+    try {
+      const appeals = await this.appealRepository.find({
+        where,
+        select: [
+          'id',
+          'liability',
+          'student',
+          'reasonType',
+          'remarks',
+          'proofUrl',
+          'status',
+          'createdAt',
+        ],
+        relations: {
+          liability: true,
+          student: true,
+        },
+      });
+
+      return {
+        data: appeals,
+        count: appeals.length,
+      };
+    } catch {
+      throw new BadRequestException('Invalid query parameters');
+    }
   }
 }
