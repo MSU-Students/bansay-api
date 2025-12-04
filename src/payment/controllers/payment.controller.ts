@@ -1,4 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -12,6 +20,7 @@ import type { JwtPayload } from '@bansay/auth/types/jwt-payload.interface';
 import { Roles } from '@bansay/auth/decorators/role.decorator';
 import { UserRole } from '@bansay/user/interfaces/user-role.enum';
 import { Payment } from '../entities/payment.entity';
+import { QueryPaymentDto } from '../dto/query-payment.dto';
 
 @ApiTags('Payment')
 @ApiBearerAuth()
@@ -38,5 +47,19 @@ export class PaymentController {
     @Body() createPaymentDto: CreatePaymentDto,
   ): Promise<Payment> {
     return this.paymentService.createPayment(user, createPaymentDto);
+  }
+
+  @Get()
+  @Roles(UserRole.OFFICER)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'List all payments (Officer only)',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid query parameters',
+  })
+  getPayment(@Query() query: QueryPaymentDto) {
+    return this.paymentService.getPayments(query);
   }
 }
