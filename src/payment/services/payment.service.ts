@@ -124,13 +124,33 @@ export class PaymentService {
     }
   }
 
-  async updatePayment(id: number, UpdatePaymentDto: UpdatePaymentDto) {
+  async updatePayment(id: number, updatePaymentDto: UpdatePaymentDto) {
     const payment = await this.paymentRepository.preload({
       id,
-      ...UpdatePaymentDto,
+      ...updatePaymentDto,
     });
+
     if (!payment)
       throw new NotFoundException(`Payment with ID ${id} not found`);
+
+    if (updatePaymentDto.status === PaymentStatus.VERIFIED) {
+      const liability = await this.liabilityRepository.preload({
+        id: payment.liability.id,
+        status: LiabilityStatus.PAID,
+      });
+
+      if (!liability)
+        throw new NotFoundException(
+          `Liability with ID ${payment.liability.id} not found`,
+        );
+
+      try {
+        await this.liabilityRepository.save(liability);
+      } catch (error) {
+        throw new BadRequestException('Failed to update liability', error);
+      }
+    }
+
     try {
       return await this.paymentRepository.save(payment);
     } catch (error) {
