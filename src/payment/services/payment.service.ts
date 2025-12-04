@@ -16,6 +16,7 @@ import { LiabilityStatus } from '@bansay/liability/types/liability-status.type';
 import { PaymentStatus } from '../types/payment-status.type';
 import { User } from '@bansay/user/entities/user.entity';
 import { QueryPaymentDto } from '../dto/query-payment.dto';
+import { UpdatePaymentDto } from '../dto/update-payment.dto';
 
 @Injectable()
 export class PaymentService {
@@ -120,6 +121,20 @@ export class PaymentService {
       };
     } catch (error) {
       throw new InternalServerErrorException(error);
+    }
+  }
+
+  async updatePayment(id: number, UpdatePaymentDto: UpdatePaymentDto) {
+    const payment = await this.paymentRepository.preload({
+      id,
+      ...UpdatePaymentDto,
+    });
+    if (!payment)
+      throw new NotFoundException(`Payment with ID ${id} not found`);
+    try {
+      return await this.paymentRepository.save(payment);
+    } catch (error) {
+      throw new BadRequestException('Failed to update payment', error);
     }
   }
 }
