@@ -94,6 +94,17 @@ export class Payment {
   @IsEnum(PaymentStatus)
   status: PaymentStatus;
 
+  @ApiProperty({
+    required: false,
+    description: 'Rejection reason if rejected',
+    example: 'Photo proof is unclear',
+  })
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  rejectionReason: string | null;
+
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
