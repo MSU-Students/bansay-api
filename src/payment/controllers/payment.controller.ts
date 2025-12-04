@@ -24,7 +24,7 @@ import { QueryPaymentDto } from '../dto/query-payment.dto';
 
 @ApiTags('Payment')
 @ApiBearerAuth()
-@Controller('my/payments')
+@Controller('payments')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
