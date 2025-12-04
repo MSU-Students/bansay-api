@@ -15,6 +15,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { Liability } from './liability/entities/liability.entity';
 import { Appeal } from './appeal/entities/appeal.entity';
 import { Payment } from './payment/entities/payment.entity';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -36,13 +37,13 @@ import { Payment } from './payment/entities/payment.entity';
           database: configService.get('database.dbName') || 'bansay_db',
           entities: [Student, User, Officer, Liability, Appeal, Payment],
           synchronize: true,
-          extra: isLocal
-            ? undefined
-            : {
-                ssl: {
-                  rejectUnauthorized: false,
-                },
-              },
+          // extra: isLocal
+          //   ? undefined
+          //   : {
+          //       ssl: {
+          //         rejectUnauthorized: false,
+          //       },
+          //     },
         };
       },
       inject: [ConfigService],
@@ -50,6 +51,7 @@ import { Payment } from './payment/entities/payment.entity';
     LiabilityModule,
     UserModule,
     AuthModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [
