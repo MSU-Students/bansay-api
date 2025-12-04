@@ -1,7 +1,13 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreatePaymentDto } from './create-payment.dto';
 import { PaymentStatus } from '../types/payment-status.type';
-import { IsEnum, IsOptional } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class UpdatePaymentDto extends PartialType(CreatePaymentDto) {
   @ApiProperty({
@@ -13,4 +19,15 @@ export class UpdatePaymentDto extends PartialType(CreatePaymentDto) {
   @IsEnum(PaymentStatus)
   @IsOptional()
   status?: PaymentStatus;
+
+  @ApiProperty({
+    required: false,
+    description: 'Rejection reason. Optional if status is Rejected',
+    example: 'Photo proof is unclear',
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((o) => o.status === PaymentStatus.REJECTED)
+  rejectionReason?: string;
 }
