@@ -68,6 +68,22 @@ export class PaymentController {
 
   @Patch(':id')
   @Roles(UserRole.OFFICER)
+  @ApiOperation({
+    summary: 'Update a payment (Officer Only)',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Payment updated successfully',
+    type: Payment,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden. Insufficient role.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Payment not found',
+  })
   update(@Param('id') id: number, @Body() updatePaymentDto: UpdatePaymentDto) {
     return this.paymentService.updatePayment(id, updatePaymentDto);
   }
