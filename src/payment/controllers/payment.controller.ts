@@ -12,6 +12,7 @@ import {
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -70,6 +71,11 @@ export class PaymentController {
   @Roles(UserRole.OFFICER)
   @ApiOperation({
     summary: 'Update a payment (Officer Only)',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'The payment ID',
+    type: Number,
   })
   @ApiResponse({
     status: HttpStatus.OK,
