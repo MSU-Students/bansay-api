@@ -4,7 +4,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -21,6 +23,7 @@ import { Roles } from '@bansay/auth/decorators/role.decorator';
 import { UserRole } from '@bansay/user/interfaces/user-role.enum';
 import { Payment } from '../entities/payment.entity';
 import { QueryPaymentDto } from '../dto/query-payment.dto';
+import { UpdatePaymentDto } from '../dto/update-payment.dto';
 
 @ApiTags('Payment')
 @ApiBearerAuth()
@@ -61,5 +64,11 @@ export class PaymentController {
   })
   getPayment(@Query() query: QueryPaymentDto) {
     return this.paymentService.getPayments(query);
+  }
+
+  @Put(':id')
+  @Roles(UserRole.OFFICER)
+  update(@Param('id') id: number, @Body() updatePaymentDto: UpdatePaymentDto) {
+    return this.paymentService.updatePayment(id, updatePaymentDto);
   }
 }
