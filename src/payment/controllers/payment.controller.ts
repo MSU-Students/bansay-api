@@ -5,8 +5,8 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -66,7 +66,7 @@ export class PaymentController {
     return this.paymentService.getPayments(query);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @Roles(UserRole.OFFICER)
   update(@Param('id') id: number, @Body() updatePaymentDto: UpdatePaymentDto) {
     return this.paymentService.updatePayment(id, updatePaymentDto);
