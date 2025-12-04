@@ -3,10 +3,11 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Payment } from '../entities/payment.entity';
 import { Liability } from '@bansay/liability/entities/liability.entity';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
@@ -14,6 +15,7 @@ import { JwtPayload } from '@bansay/auth/types/jwt-payload.interface';
 import { LiabilityStatus } from '@bansay/liability/types/liability-status.type';
 import { PaymentStatus } from '../types/payment-status.type';
 import { User } from '@bansay/user/entities/user.entity';
+import { QueryPaymentDto } from '../dto/query-payment.dto';
 
 @Injectable()
 export class PaymentService {
@@ -83,5 +85,41 @@ export class PaymentService {
     });
 
     return await this.paymentRepository.save(payment);
+  }
+
+  async getPayments(queryDto: QueryPaymentDto) {
+    const { referenceNumber, status } = queryDto;
+
+    const where: FindOptionsWhere<Payment> = {};
+    if (referenceNumber) where.referenceNumber = referenceNumber;
+    if (status) where.status = status;
+
+    try {
+      const payments = await this.paymentRepository.find({
+        where,
+        select: [
+          'amountPaid',
+          'createdAt',
+          'id',
+          'liability',
+          'paymentDate',
+          'proofUrl',
+          'referenceNumber',
+          'status',
+          'student',
+        ],
+        relations: {
+          liability: true,
+          student: true,
+        },
+      });
+
+      return {
+        data: payments,
+        count: payments.length,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }
