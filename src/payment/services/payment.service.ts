@@ -125,34 +125,47 @@ export class PaymentService {
   }
 
   async updatePayment(id: number, updatePaymentDto: UpdatePaymentDto) {
-    const payment = await this.paymentRepository.preload({
-      id,
-      ...updatePaymentDto,
-    });
-
-    if (!payment)
-      throw new NotFoundException(`Payment with ID ${id} not found`);
-
-    if (updatePaymentDto.status === PaymentStatus.VERIFIED) {
-      const liability = await this.liabilityRepository.preload({
-        id: payment.liability.id,
-        status: LiabilityStatus.PAID,
+    try {
+      const payment = await this.paymentRepository.findOne({
+        where: { id },
+        relations: {
+          liability: true,
+        },
       });
 
-      if (!liability)
-        throw new NotFoundException(
-          `Liability with ID ${payment.liability.id} not found`,
-        );
+      if (!payment)
+        throw new NotFoundException(`Payment with ID ${id} not found`);
 
-      try {
-        await this.liabilityRepository.save(liability);
-      } catch (error) {
-        throw new BadRequestException('Failed to update liability', error);
+      if (updatePaymentDto.status) {
+        if (updatePaymentDto.status === PaymentStatus.VERIFIED) {
+          const liability = await this.liabilityRepository.findOne({
+            where: { id: payment.liability.id },
+          });
+
+          if (!liability)
+            throw new NotFoundException(
+              `Liability with ID ${payment.liability.id} not found`,
+            );
+          try {
+            liability.status = LiabilityStatus.PAID;
+            await this.liabilityRepository.save(liability);
+          } catch (error) {
+            throw new BadRequestException(
+              `Failed to update liability: ${error}`,
+            );
+          }
+          payment.status = PaymentStatus.VERIFIED;
+        } else payment.status = updatePaymentDto.status;
       }
-    }
 
-    try {
-      return await this.paymentRepository.save(payment);
+      await this.paymentRepository.save(payment);
+      return await this.paymentRepository.findOne({
+        where: { id: payment.id },
+        relations: {
+          liability: true,
+          student: true,
+        },
+      });
     } catch (error) {
       throw new BadRequestException('Failed to update payment', error);
     }
