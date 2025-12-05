@@ -76,6 +76,20 @@ export class Appeal {
   @IsEnum(AppealStatus)
   status: AppealStatus;
 
+  @ApiProperty({
+    required: false,
+    type: () => User,
+  })
+  @ManyToOne(() => User, (user) => user.rejectedAppeals, { nullable: true })
+  @JoinColumn({ name: 'rejectedBy' })
+  rejectedBy: User;
+
+  @ApiProperty({
+    required: false,
+  })
+  @CreateDateColumn({ type: 'timestamptz', name: 'rejected_at' })
+  rejectedAt: Date;
+
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;

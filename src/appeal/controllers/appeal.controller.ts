@@ -68,6 +68,7 @@ export class AppealController {
         status: 'Approved',
       },
     },
+    type: Appeal,
   })
   @ApiResponse({
     status: 400,
@@ -85,8 +86,12 @@ export class AppealController {
     status: 409,
     description: 'Appeal cannot be modified in its current state',
   })
-  patchAppeal(@Param('id') id: string, @Body() appealPatchDto: AppealPatchDto) {
-    return this.appealService.patch(id, appealPatchDto);
+  patchAppeal(
+    @GetUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() appealPatchDto: AppealPatchDto,
+  ) {
+    return this.appealService.patch(user, Number(id), appealPatchDto);
   }
 
   @Get()
@@ -94,6 +99,10 @@ export class AppealController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'List all appeals (Officer only)',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: Appeal,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
