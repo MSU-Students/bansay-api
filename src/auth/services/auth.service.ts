@@ -14,6 +14,7 @@ import { UserLoginDto } from '../dto/user-login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResponseDto } from '../dto/login-response.dto';
 import { RegisterResponseDto } from '../dto/register-response.dto';
+import { JwtPayload } from '../types/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
       const newUser = this.userRepository.create({
         ...userInput,
         password: hashedPassword,
-        status: UserStatus.PENDING,
+        status: UserStatus.ACTIVE,
       });
 
       const savedUser = await this.userRepository.save(newUser);
@@ -67,7 +68,7 @@ export class AuthService {
     }
 
     // user is valid, now create JWT payload
-    const payload = {
+    const payload: JwtPayload = {
       userId: user.id,
       username: user.username,
       email: user.email,

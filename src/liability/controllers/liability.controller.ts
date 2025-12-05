@@ -52,7 +52,7 @@ export class LiabilityController {
     @Req() req: RequestWithUser,
   ): Promise<Liability> {
     const issuerId = req.user.userId;
-    
+
     return (await this.liabilityService.createLiability(
       createLiabilityDto,
       Number(issuerId),
@@ -68,9 +68,7 @@ export class LiabilityController {
     type: MyLiabilitiesResponseDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Not a Student.' })
-  async findMy(
-    @GetUser() user: JwtPayload,
-  ): Promise<MyLiabilitiesResponseDto> {
+  async findMy(@GetUser() user: JwtPayload): Promise<MyLiabilitiesResponseDto> {
     return this.liabilityService.findMyLiabilities(user);
   }
 
@@ -83,11 +81,9 @@ export class LiabilityController {
     type: [Liability],
   })
   @ApiResponse({ status: 403, description: 'Forbidden. Insufficient role.' })
-  async findAll(
-    @Query() queryDto: QueryLiabilityDto,
-  ): Promise<Liability[]> {
+  async findAll(@Query() queryDto: QueryLiabilityDto): Promise<Liability[]> {
     return this.liabilityService.findAllLiabilities(queryDto);
-  } 
+  }
 
   @Get(':id')
   @Roles(UserRole.OFFICER, UserRole.ADMIN)
