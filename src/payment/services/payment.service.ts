@@ -16,6 +16,7 @@ import { LiabilityStatus } from '@bansay/liability/types/liability-status.type';
 import { PaymentStatus } from '../types/payment-status.type';
 import { User } from '@bansay/user/entities/user.entity';
 import { QueryPaymentDto } from '../dto/query-payment.dto';
+import { UpdatePaymentDto } from '../dto/update-payment.dto';
 
 @Injectable()
 export class PaymentService {
@@ -120,6 +121,53 @@ export class PaymentService {
       };
     } catch (error) {
       throw new InternalServerErrorException(error);
+    }
+  }
+
+  async updatePayment(id: number, updatePaymentDto: UpdatePaymentDto) {
+    try {
+      const payment = await this.paymentRepository.findOne({
+        where: { id },
+        relations: {
+          liability: true,
+        },
+      });
+
+      if (!payment)
+        throw new NotFoundException(`Payment with ID ${id} not found`);
+
+      if (updatePaymentDto.status) {
+        if (updatePaymentDto.status === PaymentStatus.VERIFIED) {
+          const liability = await this.liabilityRepository.findOne({
+            where: { id: payment.liability.id },
+          });
+
+          if (!liability)
+            throw new NotFoundException(
+              `Liability with ID ${payment.liability.id} not found`,
+            );
+          try {
+            liability.status = LiabilityStatus.PAID;
+            await this.liabilityRepository.save(liability);
+          } catch (error) {
+            throw new BadRequestException(
+              `Failed to update liability: ${error}`,
+            );
+          }
+          payment.status = PaymentStatus.VERIFIED;
+        } else payment.status = updatePaymentDto.status;
+      }
+
+      await this.paymentRepository.save(payment);
+      return await this.paymentRepository.findOne({
+        where: { id: payment.id },
+        relations: {
+          liability: true,
+          student: true,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to update payment', error);
     }
   }
 }
