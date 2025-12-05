@@ -80,6 +80,11 @@ export class User {
   })
   appeals: Appeal[];
 
+  @OneToMany(() => Appeal, (appeal) => appeal.rejectedBy, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  rejectedAppeals: Appeal[];
+
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
