@@ -15,6 +15,8 @@ import { AppealStatus } from '../types/appeal-status.type';
 import { LiabilityStatus } from '@bansay/liability/types/liability-status.type';
 import { AppealPatchDto } from '../dto/patch-appeal.dto';
 import { QueryAppealDto } from '../dto/query-appeal.dto';
+import { JwtPayload } from '@bansay/auth/types/jwt-payload.interface';
+import { User } from '@bansay/user/entities/user.entity';
 
 @Injectable()
 export class AppealService {
@@ -23,6 +25,8 @@ export class AppealService {
     private readonly appealRepository: Repository<Appeal>,
     @InjectRepository(Liability)
     private readonly liabilityRepository: Repository<Liability>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async submitAppeal(
@@ -68,10 +72,10 @@ export class AppealService {
     return await this.appealRepository.save(appeal);
   }
 
-  async patch(appealId: number, appealPatchDto: AppealPatchDto) {
-    const appeal = await this.appealRepository.findOne({
-      where: { id: appealId },
-      relations: ['liability'],
+  async patch(officer: JwtPayload, id: number, appealPatchDto: AppealPatchDto) {
+    const appeal = await this.appealRepository.preload({
+      id,
+      ...appealPatchDto,
     });
 
     if (!appeal) throw new NotFoundException('Appeal not found.');
@@ -80,25 +84,46 @@ export class AppealService {
       await this.liabilityRepository.update(appeal.liability.id, {
         status: LiabilityStatus.CANCELLED,
       });
-    } else if (
+    }
+    // Rejecting appeal
+    else if (
       appeal.status === AppealStatus.PENDING &&
       appealPatchDto.status === AppealStatus.REJECTED
     ) {
-      await this.liabilityRepository.update(appeal.liability.id, {
-        status: LiabilityStatus.UNPAID,
+      const rejecter = await this.userRepository.findOneBy({
+        id: officer.userId,
       });
+
+      if (!rejecter)
+        throw new NotFoundException(
+          `Rejecting Officer with ID ${officer.userId} not found`,
+        );
+      try {
+        await this.liabilityRepository.update(appeal.liability.id, {
+          status: LiabilityStatus.UNPAID,
+        });
+
+        appeal.rejectedBy = rejecter;
+        appeal.rejectedAt = new Date();
+      } catch (error) {
+        throw new BadRequestException(`Failed to reject appeal: ${error}`);
+      }
     }
 
-    const result = await this.appealRepository.update(
-      Number(appealId),
-      appealPatchDto,
-    );
+    try {
+      await this.appealRepository.save(appeal);
 
-    if (result.affected === 0) throw new NotFoundException('Appeal not found.');
-
-    return this.appealRepository.findOne({
-      where: { id: Number(appealId) },
-    });
+      return this.appealRepository.findOne({
+        where: { id },
+        relations: {
+          liability: true,
+          rejectedBy: true,
+          student: true,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(`Failed to update appeal: ${error}`);
+    }
   }
 
   async getAppeals(queryDto: QueryAppealDto) {
@@ -110,19 +135,10 @@ export class AppealService {
     try {
       const appeals = await this.appealRepository.find({
         where,
-        select: [
-          'id',
-          'liability',
-          'student',
-          'reasonType',
-          'remarks',
-          'proofUrl',
-          'status',
-          'createdAt',
-        ],
         relations: {
           liability: true,
           student: true,
+          rejectedBy: true,
         },
       });
 
