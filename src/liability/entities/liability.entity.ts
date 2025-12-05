@@ -14,6 +14,7 @@ import {
 import { LiabilityType } from '../types/liability-type.type';
 import { LiabilityStatus } from '../types/liability-status.type';
 import { ApiProperty } from '@nestjs/swagger';
+import { Payment } from '@bansay/payment/entities/payment.entity';
 import { Appeal } from '@bansay/appeal/entities/appeal.entity';
 
 @Entity('liabilities')
@@ -22,6 +23,10 @@ import { Appeal } from '@bansay/appeal/entities/appeal.entity';
 @Index(['student', 'status'])
 @Index(['status'])
 @Index(['dueDate'])
+@Index(['student', 'dueDate'])
+@Index(['status', 'dueDate'])
+@Index(['student', 'type', 'status'])
+@Index(['createdAt', 'status'])
 export class Liability {
   @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -36,6 +41,16 @@ export class Liability {
   @ManyToOne(() => User, (user) => user.issuedLiabilities)
   @JoinColumn({ name: 'issuer_id' })
   issuer: User;
+
+  @OneToMany(() => Payment, (payment) => payment.liability, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  payments: Payment[];
+
+  @OneToMany(() => Appeal, (appeal) => appeal.liability, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  appeals: Appeal[];
 
   @ApiProperty({ enum: LiabilityType, example: LiabilityType.FINE })
   @Column({
@@ -73,9 +88,4 @@ export class Liability {
 
   @DeleteDateColumn({ type: 'timestamptz', name: 'deleted_at', select: false })
   deletedAt: Date;
-
-  @OneToMany(() => Appeal, (appeal) => appeal.liability, {
-    cascade: ['soft-remove', 'recover'],
-  })
-  appeals: Appeal[];
 }

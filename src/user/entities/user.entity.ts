@@ -11,12 +11,15 @@ import { UserRole } from '../interfaces/user-role.enum';
 import { UserStatus } from '../interfaces/user-status.enum';
 import { Liability } from '@bansay/liability/entities/liability.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Payment } from '@bansay/payment/entities/payment.entity';
 import { Appeal } from '@bansay/appeal/entities/appeal.entity';
 
 @Entity('users')
 @Index(['username'], { unique: true })
 @Index(['email'], { unique: true })
 @Index(['role', 'status'])
+@Index(['status', 'createdAt'])
+@Index(['role', 'createdAt'])
 export class User {
   @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -68,6 +71,10 @@ export class User {
   @OneToMany(() => Liability, (liability) => liability.issuer)
   issuedLiabilities: Liability[];
 
+  @OneToMany(() => Payment, (payment) => payment.student, {
+    cascade: ['soft-remove', 'recover'],
+  })
+  payments: Payment[];
   @OneToMany(() => Appeal, (appeal) => appeal.student, {
     cascade: ['soft-remove', 'recover'],
   })
