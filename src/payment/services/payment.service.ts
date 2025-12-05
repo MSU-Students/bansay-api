@@ -137,6 +137,7 @@ export class PaymentService {
         throw new NotFoundException(`Payment with ID ${id} not found`);
 
       if (updatePaymentDto.status) {
+        // Verify payment
         if (updatePaymentDto.status === PaymentStatus.VERIFIED) {
           const liability = await this.liabilityRepository.findOne({
             where: { id: payment.liability.id },
@@ -155,7 +156,14 @@ export class PaymentService {
             );
           }
           payment.status = PaymentStatus.VERIFIED;
-        } else payment.status = updatePaymentDto.status;
+        }
+        // Reject payment
+        else if (updatePaymentDto.status === PaymentStatus.REJECTED) {
+          if (updatePaymentDto.rejectionReason)
+            payment.rejectionReason = updatePaymentDto.rejectionReason;
+        }
+        // Everything else
+        else payment.status = updatePaymentDto.status;
       }
 
       await this.paymentRepository.save(payment);
