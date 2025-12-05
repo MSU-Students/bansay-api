@@ -33,12 +33,12 @@ export class Liability {
   id: number;
 
   @ApiProperty({ type: () => User })
-  @ManyToOne(() => User, (user) => user.studentLiabilities)
+  @ManyToOne(() => User, (user) => user.studentLiabilities, {nullable: true})
   @JoinColumn({ name: 'student_id' })
   student: User;
 
   @ApiProperty({ type: () => User })
-  @ManyToOne(() => User, (user) => user.issuedLiabilities)
+  @ManyToOne(() => User, (user) => user.issuedLiabilities, {nullable: true})
   @JoinColumn({ name: 'issuer_id' })
   issuer: User;
 

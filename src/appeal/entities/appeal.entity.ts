@@ -28,13 +28,13 @@ export class Appeal {
 
   @ApiProperty({ type: () => Liability })
   @ManyToOne(() => Liability, (liability) => liability.appeals, {
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({ name: 'liability_id' })
   liability: Liability;
 
   @ApiProperty({ type: () => User })
-  @ManyToOne(() => User, (user) => user.appeals, { nullable: false })
+  @ManyToOne(() => User, (user) => user.appeals, { nullable: true })
   @JoinColumn({ name: 'student_id' })
   student: User;
 

@@ -36,13 +36,13 @@ export class Payment {
 
   @ApiProperty({ type: () => Liability })
   @ManyToOne(() => Liability, (liability) => liability.payments, {
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({ name: 'liability_id' })
   liability: Liability;
 
   @ApiProperty({ type: () => User })
-  @ManyToOne(() => User, (user) => user.payments, { nullable: false })
+  @ManyToOne(() => User, (user) => user.payments, { nullable: true })
   @JoinColumn({ name: 'student_id' })
   student: User;
 

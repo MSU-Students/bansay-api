@@ -11,7 +11,7 @@ provider:
     DATABASE_HOST : ${env:DATABASE_HOST}
     DB_USER : ${env:DB_USER}
     DB_PASSWORD : ${env:DB_PASSWORD}
-    NODE_ENV : ${env:NODE_ENV}
+    ENV : ${env:ENV}
   region: us-east-2 # Choose your desired region
   # Attach necessary IAM roles/policies here
   timeout: 20 
