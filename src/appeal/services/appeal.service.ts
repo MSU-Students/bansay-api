@@ -80,6 +80,13 @@ export class AppealService {
       await this.liabilityRepository.update(appeal.liability.id, {
         status: LiabilityStatus.CANCELLED,
       });
+    } else if (
+      appeal.status === AppealStatus.PENDING &&
+      appealPatchDto.status === AppealStatus.REJECTED
+    ) {
+      await this.liabilityRepository.update(appeal.liability.id, {
+        status: LiabilityStatus.UNPAID,
+      });
     }
 
     const result = await this.appealRepository.update(
