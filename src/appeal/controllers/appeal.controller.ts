@@ -68,6 +68,7 @@ export class AppealController {
         status: 'Approved',
       },
     },
+    type: Appeal,
   })
   @ApiResponse({
     status: 400,
@@ -98,6 +99,10 @@ export class AppealController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'List all appeals (Officer only)',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: Appeal,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
