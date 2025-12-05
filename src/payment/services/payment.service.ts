@@ -17,6 +17,7 @@ import { PaymentStatus } from '../types/payment-status.type';
 import { User } from '@bansay/user/entities/user.entity';
 import { QueryPaymentDto } from '../dto/query-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
+import { PaymentListDto } from '../dto/payment-list.dto';
 
 @Injectable()
 export class PaymentService {
@@ -88,7 +89,7 @@ export class PaymentService {
     return await this.paymentRepository.save(payment);
   }
 
-  async getPayments(queryDto: QueryPaymentDto) {
+  async getPayments(queryDto: QueryPaymentDto): Promise<PaymentListDto> {
     const { referenceNumber, status } = queryDto;
 
     const where: FindOptionsWhere<Payment> = {};

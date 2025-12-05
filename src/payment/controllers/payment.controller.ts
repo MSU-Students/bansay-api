@@ -25,6 +25,7 @@ import { UserRole } from '@bansay/user/interfaces/user-role.enum';
 import { Payment } from '../entities/payment.entity';
 import { QueryPaymentDto } from '../dto/query-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
+import { PaymentListDto } from '../dto/payment-list.dto';
 
 @ApiTags('Payment')
 @ApiBearerAuth()
@@ -61,6 +62,11 @@ export class PaymentController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid query parameters',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK, 
+    type: PaymentListDto,
     description: 'Invalid query parameters',
   })
   getPayment(@Query() query: QueryPaymentDto) {
