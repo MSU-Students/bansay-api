@@ -86,7 +86,7 @@ export class AppealController {
     description: 'Appeal cannot be modified in its current state',
   })
   patchAppeal(@Param('id') id: string, @Body() appealPatchDto: AppealPatchDto) {
-    return this.appealService.patch(id, appealPatchDto);
+    return this.appealService.patch(Number(id), appealPatchDto);
   }
 
   @Get()

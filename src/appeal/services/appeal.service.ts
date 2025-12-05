@@ -68,9 +68,9 @@ export class AppealService {
     return await this.appealRepository.save(appeal);
   }
 
-  async patch(appealId: string, appealPatchDto: AppealPatchDto) {
+  async patch(appealId: number, appealPatchDto: AppealPatchDto) {
     const appeal = await this.appealRepository.findOne({
-      where: { id: Number(appealId) },
+      where: { id: appealId },
       relations: ['liability'],
     });
 
